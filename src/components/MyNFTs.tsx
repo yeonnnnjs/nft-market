@@ -1,20 +1,14 @@
-// components/MyNFTs.tsx
 import { useState, useEffect } from 'react';
+import { useAccount } from './context/AccountContext';
 
-interface MyNFTsProps {
-  account: string | null;
-}
-
-const MyNFTs: React.FC<MyNFTsProps> = ({ account }) => {
+const MyNFTs = () => {
   const [myNFTs, setMyNFTs] = useState<string[]>([]);
+  const {account} = useAccount();
 
   useEffect(() => {
-    // Add logic to fetch NFTs owned by the account
-    // For simulation, let's assume an array of NFT IDs
     const fetchMyNFTs = async () => {
       if (account) {
-        // Simulate fetching NFTs from a contract
-        const nftContract = {} as any; // Replace with your NFT contract instance
+        const nftContract = {} as any;
         const balance = await nftContract.balanceOf(account);
         const nftIds = await Promise.all(
           Array.from({ length: balance.toNumber() }, (_, index) =>

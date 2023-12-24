@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
+import { useAccount } from '@/src/components/context/AccountContext';
 
-const WalletConnectButton: React.FC = () => {
-  const [account, setAccount] = useState<string | null>(null);
-
+const WalletConnectButton = () => {
+  const { account, setAccount } = useAccount();
+  
   const connectWallet = async () => {
     try {
       const [selectedAccount] = await window.ethereum.request({ method: 'eth_requestAccounts' });

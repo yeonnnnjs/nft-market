@@ -1,4 +1,3 @@
-// components/MintNFTForm.tsx
 import { useState } from 'react';
 
 interface MintNFTFormProps {

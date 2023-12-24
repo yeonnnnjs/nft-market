@@ -1,4 +1,3 @@
-// components/TransferNFTForm.tsx
 import { useState } from 'react';
 
 interface TransferNFTFormProps {
