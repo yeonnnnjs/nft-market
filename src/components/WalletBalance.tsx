@@ -4,18 +4,15 @@ import { ethers } from 'ethers';
 
 const WalletBalance = () => {
   const [balance, setBalance] = useState<number | null>(null);
-  const { account } = useAccount();
+  const { account, provider } = useAccount();
 
   useEffect(() => {
-    console.log(account);
-    console.log(window);
-
     fetchBalance();
   }, [account]);
 
   const fetchBalance = async () => {
-    if (account) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+    console.log(provider);
+    if (account && provider) {
       const balance = await provider.getBalance(account);
       setBalance(parseFloat(ethers.formatUnits(balance)));
     }

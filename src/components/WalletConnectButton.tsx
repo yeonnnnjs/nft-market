@@ -1,17 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAccount } from '@/src/components/context/AccountContext';
 
 const WalletConnectButton = () => {
-  const { account, setAccount } = useAccount();
-  
-  const connectWallet = async () => {
-    try {
-      const [selectedAccount] = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      setAccount(selectedAccount);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { account, setAccount, connectWallet } = useAccount();
 
   useEffect(() => {
     if (typeof window.ethereum !== 'undefined') {
