@@ -14,10 +14,6 @@ const Main: React.FC = () => {
         setAccount(selectedAccount);
     };
 
-    const handleMintNFT = (image: string, title: string) => {
-        console.log(`Minting NFT with image: ${image}, title: ${title}`);
-    };
-
     const handleTransferNFT = (to: string, nftId: number) => {
         console.log(`Transferring NFT to: ${to}, NFT ID: ${nftId}`);
     };
@@ -30,7 +26,7 @@ const Main: React.FC = () => {
                     {account && (
                         <div>
                             <WalletBalance/>
-                            <MintNFTForm onMint={handleMintNFT} />
+                            <MintNFTForm/>
                             <MyNFTs/>
                             <TransferNFTForm onTransfer={handleTransferNFT} />
                         </div>

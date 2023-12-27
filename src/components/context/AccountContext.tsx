@@ -22,9 +22,6 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         const provider = new ethers.BrowserProvider(ethereum);
         const [selectedAccount] = await provider.send('eth_requestAccounts', []);
 
-        console.log(provider);
-        console.log(selectedAccount);
-        
         setProvider(provider);
         setAccount(selectedAccount);
       } else {

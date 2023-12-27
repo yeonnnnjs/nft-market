@@ -4,11 +4,11 @@ import { ethers } from 'ethers';
 
 const MyNFTs = () => {
   const [myNFTs, setMyNFTs] = useState<string[]>([]);
-  const { account } = useAccount();
+  const { account, provider } = useAccount();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (account) {
+      if (account && provider) {
         const nftContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
         const nftContractABI = [
           {
@@ -33,8 +33,6 @@ const MyNFTs = () => {
         ];
 
         try {
-          // const provider = new ethers.BrowserProvider(window.ethereum);
-          const provider = new ethers.getDefaultProvider();
           const contract = new ethers.Contract(nftContractAddress, nftContractABI, provider);
           const result = await contract.getOwnedNFTs(account);
           setMyNFTs(result);

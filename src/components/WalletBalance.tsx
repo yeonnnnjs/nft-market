@@ -11,7 +11,6 @@ const WalletBalance = () => {
   }, [account]);
 
   const fetchBalance = async () => {
-    console.log(provider);
     if (account && provider) {
       const balance = await provider.getBalance(account);
       setBalance(parseFloat(ethers.formatUnits(balance)));
