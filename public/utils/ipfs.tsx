@@ -1,5 +1,5 @@
 async function uploadToNFTStorage(file: File): Promise<string> {
-  const apiKey = process.env.NEXT_PUBLIC_INFURA_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_IPFS_API_KEY;
   const endpoint = 'https://api.nft.storage/upload';
 
   const formData = new FormData();

@@ -25,7 +25,9 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         setProvider(provider);
         setAccount(selectedAccount);
       } else {
-        console.error('MetaMask not detected');
+        console.log("MetaMask not installed; using read-only defaults");
+        const provider = ethers.getDefaultProvider();
+        setProvider(provider);
       }
     } catch (error) {
       console.error('Error connecting wallet:', error.message);

@@ -1,21 +1,15 @@
-import { useEffect } from 'react';
 import { useAccount } from '@/src/components/context/AccountContext';
 
 const WalletConnectButton = () => {
-  const { account, setAccount, connectWallet } = useAccount();
-
-  useEffect(() => {
-    if (typeof window.ethereum !== 'undefined') {
-      window.ethereum.on('accountsChanged', (accounts: string[]) => {
-        setAccount(accounts[0]);
-      });
-    }
-  }, []);
+  const { account, connectWallet, disconnectWallet } = useAccount();
 
   return (
     <div>
       {account ? (
-        <p>Connected: {account}</p>
+        <div>
+          <p>Connected: {account}</p>
+          <button onClick={disconnectWallet}>Disconnect Wallet</button>
+        </div>
       ) : (
         <button onClick={connectWallet}>Connect Wallet</button>
       )}

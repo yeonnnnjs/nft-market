@@ -1,16 +1,11 @@
 import { useState } from 'react';
 
-interface TransferNFTFormProps {
-  onTransfer: (to: string, nftId: number) => void;
-}
-
-const TransferNFTForm: React.FC<TransferNFTFormProps> = ({ onTransfer }) => {
+const TransferNFTForm = () => {
   const [to, setTo] = useState('');
   const [nftId, setNftId] = useState<number>(0);
 
   const handleTransfer = () => {
-    onTransfer(to, nftId);
-    // Add logic to transfer NFT
+    // onTransfer(to, nftId);
   };
 
   return (
