@@ -5,7 +5,8 @@ import uploadToNFTStorage from '@/public/utils/ipfs';
 
 const MintNFTForm = () => {
   const [image, setImage] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('ipfs');
   const { provider } = useAccount();
 
@@ -16,17 +17,21 @@ const MintNFTForm = () => {
     }
   };
 
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUrl(e.target.value);
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value);
   };
 
   const handleMint = async () => {
-    if ((image || imageUrl) && provider) {
+    let metadata;
+    if (image && provider) {
       try {
         if (activeTab === 'ipfs') {
           if (image) {
-            const ipfsUrl = await uploadToNFTStorage(image);
-            setImageUrl(ipfsUrl);
+            metadata = await uploadToNFTStorage(image, name, description);
           }
         }
 
@@ -35,6 +40,14 @@ const MintNFTForm = () => {
           {
             "constant": false,
             "inputs": [
+              {
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "name": "description",
+                "type": "string"
+              },
               {
                 "name": "uri",
                 "type": "string"
@@ -50,11 +63,8 @@ const MintNFTForm = () => {
 
         const signer = await provider.getSigner();
         const nftContract = new ethers.Contract(contractAddress, contractAbi, signer);
-
-        const formData = new FormData();
-        formData.append('uri', imageUrl);
-
-        const mintTransaction = await nftContract.safeMint(formData, { gasLimit: 300000 });
+        const url = metadata.image.href;
+        const mintTransaction = await nftContract.safeMint(metadata.name, metadata.description, url , { gasLimit: 300000 });
         await mintTransaction.wait();
 
         console.log('NFT successfully minted!');
@@ -75,14 +85,25 @@ const MintNFTForm = () => {
         </button>
       </div>
       {activeTab === 'ipfs' ? (
+        <div>
         <label>
           Image:
           <input type="file" onChange={handleImageChange} accept="image/*" />
         </label>
+        <br></br>
+        <label>
+          Name:
+          <input type="text" value={name} onChange={handleNameChange} />
+        </label>
+        <label>
+        Description:
+          <input type="text" value={description} onChange={handleDescriptionChange} />
+        </label>
+        </div>
       ) : (
         <label>
           Image URL:
-          <input type="text" value={imageUrl} onChange={handleImageUrlChange} />
+          {/* <input type="text" value={imageUrl} onChange={handleImageUrlChange} /> */}
         </label>
       )}
       <button onClick={handleMint}>Mint NFT</button>

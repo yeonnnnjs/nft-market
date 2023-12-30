@@ -1,24 +1,17 @@
-async function uploadToNFTStorage(file: File): Promise<string> {
+import { NFTStorage } from 'nft.storage'
+
+async function uploadToNFTStorage(file: File, name: string, description: string) {
   const apiKey = process.env.NEXT_PUBLIC_IPFS_API_KEY;
-  const endpoint = 'https://api.nft.storage/upload';
+  const client = new NFTStorage({ token: apiKey });
 
-  const formData = new FormData();
-  formData.append('file', file);
+  const metadata = await client.store({
+    name: name,
+    description: description,
+    image: file,
+  })
+  console.log(metadata.data);
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to upload to NFT.storage. Status: ${response.status}`);
-  }
-
-  const result = await response.json();
-  return `https://${result.value.cid}.ipfs.nftstorage.link`;
+  return metadata.data;
 }
 
 export default uploadToNFTStorage;

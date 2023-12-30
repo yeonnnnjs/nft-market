@@ -1,62 +1,100 @@
 import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import { useAccount } from './context/AccountContext';
-import { ethers } from 'ethers'; 
+
+function convertToObjects(list) {
+  const numRows = list.length;
+  const numCols = list[0].length;
+
+  const resultArray = [];
+
+  for (let col = 0; col < numCols; col++) {
+    const obj = {};
+
+    for (let row = 1; row < numRows; row++) {
+      if (row === 1) {
+        obj['image'] = list[row][col].replace('ipfs://', 'https://ipfs.io/ipfs/');
+      } else if (row === 2) {
+        obj['name'] = list[row][col];
+      } else if (row === 3) {
+        obj['description'] = list[row][col];
+      }
+    }
+    resultArray.push(obj);
+  }
+  return resultArray;
+}
 
 const MyNFTs = () => {
-  const [myNFTs, setMyNFTs] = useState<string[]>([]);
+  const [nftList, setNFTList] = useState([]);
   const { account, provider } = useAccount();
 
+  
   useEffect(() => {
-    const fetchData = async () => {
-      if (account && provider) {
-        const nftContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-        const nftContractABI = [
+    const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+    const contractAbi = [
+      {
+        "constant": true,
+        "inputs": [
           {
-            "constant": true,
-            "inputs": [
-              {
-                "name": "owner",
-                "type": "address"
-              }
-            ],
-            "name": "getOwnedNFTs",
-            "outputs": [
-              {
-                "name": "",
-                "type": "uint256[]"
-              }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
+            "name": "owner",
+            "type": "address"
           }
-        ];
+        ],
+        "name": "getOwnedNFTs",
+        "outputs": [
+          {
+            "name": "ownedNFTs",
+            "type": "uint256[]"
+          },
+          {
+            "name": "tokenURIs",
+            "type": "string[]"
+          },
+          {
+            "name": "tokenNames",
+            "type": "string[]"
+          },
+          {
+            "name": "tokenDescriptions",
+            "type": "string[]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ];
+    
+    const contract = new ethers.Contract(contractAddress, contractAbi, provider);
 
-        try {
-          const contract = new ethers.Contract(nftContractAddress, nftContractABI, provider);
-          const result = await contract.getOwnedNFTs(account);
-          setMyNFTs(result);
-        } catch (error) {
-          console.error("데이터를 가져오는 중 에러 발생:", error);
-        }
+    const fetchNFTList = async () => {
+      try {
+        const result = await contract.getOwnedNFTs(account);
+        const array = convertToObjects(result);
+        console.log(array);
+        setNFTList(array);
+      } catch (error) {
+        console.error('Error fetching NFT list:', error);
       }
     };
 
-    fetchData();
+    if (account) {
+      fetchNFTList();
+    }
   }, [account]);
 
   return (
     <div>
-      {account && myNFTs.length > 0 && (
-        <div>
-          <p>My NFTs:</p>
-          <ul>
-            {myNFTs.map((nftId) => (
-              <li key={nftId}>NFT ID: {nftId}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <ul>
+        {nftList.map((nft) => (
+          <div>
+            <li>name: {nft.name}</li>
+            <li>description: {nft.description}</li>
+            <img src={nft.image} alt={nft.name} width={500}></img>
+          </div>
+        ))}
+      </ul>
     </div>
   );
 };
