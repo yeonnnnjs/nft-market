@@ -1,4 +1,5 @@
 import { useAccount } from '@/src/components/context/AccountContext';
+import 'tailwindcss/tailwind.css';
 
 const WalletConnectButton = () => {
   const { account, connectWallet, disconnectWallet } = useAccount();
@@ -6,12 +7,13 @@ const WalletConnectButton = () => {
   return (
     <div>
       {account ? (
+
         <div>
-          <p>Connected: {account}</p>
-          <button onClick={disconnectWallet}>Disconnect Wallet</button>
+          <span className="mr-2">{account}</span>
+          <button className="bg-white text-blue-500 px-2 py-1 rounded" onClick={disconnectWallet}>로그아웃</button>
         </div>
       ) : (
-        <button onClick={connectWallet}>Connect Wallet</button>
+        <button className="bg-white text-blue-500 px-2 py-1 rounded" onClick={connectWallet}>로그인(MetaMask)</button>
       )}
     </div>
   );

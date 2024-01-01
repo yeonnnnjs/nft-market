@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 
 interface AccountContextProps {
   account: string | null;
@@ -24,6 +24,8 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
 
         setProvider(provider);
         setAccount(selectedAccount);
+
+        sessionStorage.setItem('userAccount', selectedAccount);
       } else {
         console.log("MetaMask not installed; using read-only defaults");
         const provider = ethers.getDefaultProvider();
@@ -37,13 +39,26 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
   const disconnectWallet = () => {
     setProvider(null);
     setAccount(null);
+
+    sessionStorage.removeItem('userAccount');
   };
 
   useEffect(() => {
+    const ethereum = window.ethereum;
+    const storedAccount = sessionStorage.getItem('userAccount');
+    const provider = new ethers.BrowserProvider(ethereum);
+
+    if (storedAccount) {
+      setAccount(storedAccount);
+      setProvider(provider);
+    }
+
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', ([newAccount]) => {
         if (newAccount) {
           setAccount(newAccount);
+          
+          sessionStorage.setItem('userAccount', newAccount);
         } else {
           disconnectWallet();
         }
