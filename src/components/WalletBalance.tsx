@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAccount } from './context/AccountContext';
+import { useAccount } from '../context/AccountContext';
 import { ethers } from 'ethers';
 
 const WalletBalance = () => {

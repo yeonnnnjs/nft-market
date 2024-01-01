@@ -1,4 +1,4 @@
-import { useAccount } from '@/src/components/context/AccountContext';
+import { useAccount } from '../context/AccountContext';
 import 'tailwindcss/tailwind.css';
 
 const WalletConnectButton = () => {

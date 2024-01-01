@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
-import { useAccount } from './context/AccountContext';
-import uploadToNFTStorage from '@/public/utils/ipfs';
+import { useAccount } from '../context/AccountContext';
+import uploadToNFTStorage from '../utils/ipfs';
 import 'tailwindcss/tailwind.css';
 
 const MintNFTForm = () => {

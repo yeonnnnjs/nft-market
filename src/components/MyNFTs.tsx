@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { useAccount } from './context/AccountContext';
+import { useAccount } from '../context/AccountContext';
 import TransferNFTForm from './TransferNFTForm';
 import 'tailwindcss/tailwind.css';
 

@@ -1,4 +1,4 @@
-import { AccountProvider } from '@/src/components/context/AccountContext';
+import { AccountProvider } from '@/src/context/AccountContext';
 import { useState } from 'react';
 import Main from '@/pages/index'
 import Head from 'next/head';

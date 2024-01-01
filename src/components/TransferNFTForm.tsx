@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import { useAccount } from './context/AccountContext';
+import { useAccount } from '../context/AccountContext';
 
 const TransferNFTForm = ({ nftId }) => {
   const [to, setTo] = useState('');
