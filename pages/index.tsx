@@ -3,6 +3,7 @@ import MintNFTForm from '../src/components/MintNFTForm';
 import MyNFTs from '../src/components/MyNFTs';
 import MyInfo from '@/src/components/MyInfo';
 import Error from '@/src/components/Error';
+import AllNFTs from '@/src/components/AllNFTs';
 import { useErrorContext } from '@/src/context/ErrorContext';
 
 interface MainContentProps {
@@ -18,6 +19,7 @@ const Main: React.FC<MainContentProps> = ({ selectedMenuItem }) => {
         <Error />
       ) : (
         <>
+        {selectedMenuItem === 'AllNFTs' && <AllNFTs />}
           {selectedMenuItem === 'MyInfo' && <MyInfo />}
           {selectedMenuItem === 'MyNFTs' && <MyNFTs />}
           {selectedMenuItem === 'MintNFT' && <MintNFTForm />}

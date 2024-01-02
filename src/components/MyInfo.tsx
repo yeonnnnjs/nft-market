@@ -18,9 +18,9 @@ const MyInfo = () => {
   };
 
   return (
-    <div className="p-4 bg-gray-100 rounded-md shadow-md">
+    <div className="p-4 bg-theme-background text-theme-text bg-gray-100 rounded-md shadow-md">
       {account ? (
-        <div className="mt-4">
+        <div className="mt-4 bg-theme-background text-theme-text">
           <p className="text-xl font-bold">Connected: {account}</p>
           <p className="text-lg">
           Balance: {balance} {chainInfo?.currency}

@@ -1,6 +1,6 @@
 import { AccountProvider } from '@/src/context/AccountContext';
 import { ErrorProvider } from '@/src/context/ErrorContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Main from '@/pages/index'
 import Head from 'next/head';
 import NavBar from '@/src/components/NavBar';

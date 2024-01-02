@@ -15,6 +15,31 @@ contract BasicNFT is ERC721, ERC721Enumerable, ERC721URIStorage {
 
     constructor() ERC721("YeonnnnNFT", "YNFT") {}
 
+    struct NFTInfo {
+        uint256 tokenId;
+        string tokenURI;
+        string name;
+        string description;
+    }
+
+    function getAllNFTs() external view returns (NFTInfo[] memory) {
+    uint256 totalSupply = _tokenIdCounter.current();
+    NFTInfo[] memory allNFTs = new NFTInfo[](totalSupply);
+
+    for (uint256 i = 0; i < totalSupply; i++) {
+        uint256 tokenId = i;
+        allNFTs[i] = NFTInfo({
+            tokenId: tokenId,
+            tokenURI: tokenURI(tokenId),
+            name: tokenName[tokenId],
+            description: tokenDescription[tokenId]
+        });
+    }
+
+    return allNFTs;
+}
+
+
      function safeMint(string memory name, string memory description, string memory uri) public {
         uint256 tokenId = _tokenIdCounter.current();
         require(tokenId <= MAX_SUPPLY, "YeonnnnNFTs are sold out!");

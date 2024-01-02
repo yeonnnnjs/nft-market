@@ -22,6 +22,12 @@ const NavBar: React.FC<NavBarProps> = ({ onSelectMenuItem }) => {
                         <>
                             <span
                                 className="cursor-pointer text-white hover:text-gray-300"
+                                onClick={() => onSelectMenuItem('AllNFTs')}
+                            >
+                                전체보기
+                            </span>
+                            <span
+                                className="cursor-pointer text-white hover:text-gray-300"
                                 onClick={() => onSelectMenuItem('MyInfo')}
                             >
                                 내 정보

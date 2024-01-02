@@ -81,7 +81,7 @@ const MintNFTForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded-md">
+    <div className="max-w-md bg-theme-background text-theme-text mx-auto p-4 bg-white shadow-md rounded-md">
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Image:</label>
         <input type="file" onChange={handleImageChange} accept="image/*" className="mt-1 p-2 border border-gray-300 rounded-md" />

@@ -11,17 +11,16 @@ function convertToObjects(list) {
 
   const resultArray = [];
 
-  for (let col = 0; col < numCols; col++) {
+  for (let row = 0; row < numRows; row++) {
     const obj = {};
-
-    for (let row = 0; row < numRows; row++) {
-      if (row === 0) {
+    for (let col = 0; col < numCols; col++) {
+      if (col === 0) {
         obj['id'] = list[row][col];
-      } else if (row === 1) {
+      } else if (col === 1) {
         obj['image'] = list[row][col].replace('ipfs://', 'https://ipfs.io/ipfs/');
-      } else if (row === 2) {
+      } else if (col === 2) {
         obj['name'] = list[row][col];
-      } else if (row === 3) {
+      } else if (col === 3) {
         obj['description'] = list[row][col];
       }
     }
@@ -30,15 +29,13 @@ function convertToObjects(list) {
   return resultArray;
 }
 
-const MyNFTs = () => {
+const AllNFTs = () => {
   const [nftList, setNFTList] = useState([]);
   const { account, provider, chainInfo } = useAccount();
   const [selectedNFT, setSelectedNFT] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(true);
 
-  const handleNFTSelect = (index, type) => {
-    setModalType(type);
+  const handleNFTSelect = (index) => {
     setSelectedNFT(nftList[index]);
     setIsModalOpen(true);
   };
@@ -50,44 +47,33 @@ const MyNFTs = () => {
   useEffect(() => {
     const contractAddress = getContractAddress(chainInfo?.currency);
     const contractAbi = [
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "owner",
-            "type": "address"
-          }
-        ],
-        "name": "getOwnedNFTs",
-        "outputs": [
-          {
-            "name": "ownedNFTs",
-            "type": "uint256[]"
-          },
-          {
-            "name": "tokenURIs",
-            "type": "string[]"
-          },
-          {
-            "name": "tokenNames",
-            "type": "string[]"
-          },
-          {
-            "name": "tokenDescriptions",
-            "type": "string[]"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ];
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "getAllNFTs",
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple[]",
+              "components": [
+                {"name": "tokenId", "type": "uint256"},
+                {"name": "tokenURI", "type": "string"},
+                {"name": "name", "type": "string"},
+                {"name": "description", "type": "string"}
+              ]
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ];
 
     const contract = new ethers.Contract(contractAddress, contractAbi, provider);
 
     const fetchNFTList = async () => {
       try {
-        const result = await contract.getOwnedNFTs(account);
+        const result = await contract.getAllNFTs();
         const array = convertToObjects(result);
         setNFTList(array);
       } catch (error) {
@@ -106,7 +92,7 @@ const MyNFTs = () => {
         (
           <div className="col-span-full flex items-center justify-center mt-8">
             <div className="bg-gray-100 p-8 rounded-md shadow-md">
-              <h1 className="text-xl font-semibold text-gray-600">보유한 NFT가 없습니다!</h1>
+              <h1 className="text-xl font-semibold text-gray-600">NFT가 없습니다!</h1>
             </div>
           </div>
         ) : (
@@ -116,8 +102,7 @@ const MyNFTs = () => {
               <h2 className="text-lg font-semibold">{nft.name}</h2>
               <p className="text-gray-500">{nft.description}</p>
               <div className="flex gap-4">
-                <button onClick={() => handleNFTSelect(index, true)} className="text-blue-500">상세보기</button>
-                <button onClick={() => handleNFTSelect(index, false)} className="text-blue-500">전송하기</button>
+                <button onClick={() => handleNFTSelect(index)} className="text-blue-500">상세보기</button>
               </div>
             </div>
           ))
@@ -125,7 +110,6 @@ const MyNFTs = () => {
       }
 
       {isModalOpen && (
-        (modalType ? (
           <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-4 rounded-md shadow-md">
               <img src={selectedNFT?.image} alt={selectedNFT?.name} className="mb-2 rounded-md" />
@@ -134,17 +118,9 @@ const MyNFTs = () => {
               <button onClick={handleCloseModal} className="text-blue-500">닫기</button>
             </div>
           </div>
-        ) : (
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-4 rounded-md shadow-md">
-              <TransferNFTForm nftId={selectedNFT.id} />
-              <button onClick={handleCloseModal} className="text-blue-500">닫기</button>
-            </div>
-          </div>
-        ))
       )}
     </div>
   );
 };
 
-export default MyNFTs;
+export default AllNFTs;
