@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from '../context/AccountContext';
+import { getContractAddress } from '../utils/contractPicker';
 import uploadToNFTStorage from '../utils/ipfs';
 import 'tailwindcss/tailwind.css';
 
@@ -9,7 +10,7 @@ const MintNFTForm = () => {
   const [name, setName] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [description, setDescription] = useState<string>('');
-  const { provider } = useAccount();
+  const { provider, chainInfo } = useAccount();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -40,7 +41,7 @@ const MintNFTForm = () => {
             metadata = await uploadToNFTStorage(image, name, description);
           }
 
-        const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+        const contractAddress = getContractAddress(chainInfo?.currency);
         const contractAbi = [
           {
             "constant": false,

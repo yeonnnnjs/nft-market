@@ -1,4 +1,5 @@
 import { useAccount } from '../context/AccountContext';
+import { useErrorContext } from '../context/ErrorContext';
 import WalletConnectButton from './WalletConnectButton';
 import 'tailwindcss/tailwind.css';
 
@@ -8,6 +9,7 @@ interface NavBarProps {
 
 const NavBar: React.FC<NavBarProps> = ({ onSelectMenuItem }) => {
     const { account } = useAccount();
+    const { errorMsg } = useErrorContext();
 
     return (
         <nav className="bg-blue-500 p-4">
@@ -16,7 +18,7 @@ const NavBar: React.FC<NavBarProps> = ({ onSelectMenuItem }) => {
                     <h1 className="text-white text-2xl font-bold">NFT Marketplace</h1>
                 </div>
                 <div className="flex space-x-4">
-                    {account ? (
+                    {account && !errorMsg ? (
                         <>
                             <span
                                 className="cursor-pointer text-white hover:text-gray-300"

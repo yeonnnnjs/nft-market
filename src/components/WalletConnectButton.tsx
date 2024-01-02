@@ -7,7 +7,6 @@ const WalletConnectButton = () => {
   return (
     <div>
       {account ? (
-
         <div>
           <span className="mr-2">{account}</span>
           <button className="bg-white text-blue-500 px-2 py-1 rounded" onClick={disconnectWallet}>로그아웃</button>

@@ -1,4 +1,5 @@
 import { AccountProvider } from '@/src/context/AccountContext';
+import { ErrorProvider } from '@/src/context/ErrorContext';
 import { useState } from 'react';
 import Main from '@/pages/index'
 import Head from 'next/head';
@@ -12,17 +13,19 @@ function NftMarket() {
     };
 
     return (
-        <AccountProvider>
-            <div>
-                <Head>
-                    <title>NFT Marketplace</title>
-                    <meta name="description" content="NFT Marketplace by yeonnnnjs" />
-                    <link rel="icon" href="/favicon.ico" />
-                </Head>
-                <NavBar onSelectMenuItem={handleSelectMenuItem} />
-                <Main selectedMenuItem={selectedMenuItem} />
-            </div>
-        </AccountProvider>
+        <ErrorProvider>
+            <AccountProvider>
+                <>
+                    <Head>
+                        <title>NFT Marketplace</title>
+                        <meta name="description" content="NFT Marketplace by yeonnnnjs" />
+                        <link rel="icon" href="/favicon.ico" />
+                    </Head>
+                    <NavBar onSelectMenuItem={handleSelectMenuItem} />
+                    <Main selectedMenuItem={selectedMenuItem} />
+                </>
+            </AccountProvider>
+        </ErrorProvider>
     );
 }
 

@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from '../context/AccountContext';
+import { getContractAddress } from '../utils/contractPicker';
 
 const TransferNFTForm = ({ nftId }) => {
   const [to, setTo] = useState('');
-  const { provider } = useAccount();
+  const { provider, chainInfo } = useAccount();
 
   useEffect(() => {
     nftId = Number(nftId);
-    console.log(nftId);
-
   }, [nftId]);
 
   const handleTransfer = async () => {
     if (provider) {
       try {
-        const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+        const contractAddress = getContractAddress(chainInfo?.currency);
         const contractAbi = [
           {
             "constant": false,
