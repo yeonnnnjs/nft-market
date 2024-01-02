@@ -1,9 +1,11 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { ethers } from "ethers";
+import { Chain, getChainInfo } from '@/public/data/ChainList';
 
 interface AccountContextProps {
   account: string | null;
   provider: ethers.BrowserProvider | null;
+  chainInfo: Chain | null;
   setAccount: (account: string | null) => void;
   connectWallet: () => void;
   disconnectWallet: () => void;
@@ -14,14 +16,18 @@ const AccountContext = createContext<AccountContextProps | undefined>(undefined)
 export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [account, setAccount] = useState<string | null>(null);
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
+  const [chainInfo, setChainInfo] = useState<Chain | null>(null);
 
   const connectWallet = async () => {
     try {
       const ethereum = window.ethereum;
       if (ethereum) {
         const provider = new ethers.BrowserProvider(ethereum);
-        const [selectedAccount] = await provider.send('eth_requestAccounts', []);
+        const selectedAccount = sessionStorage.getItem('userAccount') || await provider.send('eth_requestAccounts', []);
+        const network = await provider.getNetwork();
+        const chain = getChainInfo(parseFloat(network.chainId));
 
+        setChainInfo(chain);
         setProvider(provider);
         setAccount(selectedAccount);
 
@@ -39,25 +45,17 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
   const disconnectWallet = () => {
     setProvider(null);
     setAccount(null);
-
+    setChainInfo(null);
     sessionStorage.removeItem('userAccount');
   };
 
   useEffect(() => {
-    const ethereum = window.ethereum;
-    const storedAccount = sessionStorage.getItem('userAccount');
-    const provider = new ethers.BrowserProvider(ethereum);
-
-    if (storedAccount) {
-      setAccount(storedAccount);
-      setProvider(provider);
-    }
+    connectWallet();
 
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', ([newAccount]) => {
         if (newAccount) {
           setAccount(newAccount);
-          
           sessionStorage.setItem('userAccount', newAccount);
         } else {
           disconnectWallet();
@@ -67,7 +65,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   return (
-    <AccountContext.Provider value={{ account, provider, setAccount, connectWallet, disconnectWallet }}>
+    <AccountContext.Provider value={{ account, provider, chainInfo, setAccount, connectWallet, disconnectWallet }}>
       {children}
     </AccountContext.Provider>
   );

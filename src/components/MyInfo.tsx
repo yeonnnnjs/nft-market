@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 
 const MyInfo = () => {
   const [balance, setBalance] = useState<number | null>(null);
-  const { account, provider, connectWallet, disconnectWallet } = useAccount();
+  const { account, provider, chainInfo, connectWallet, disconnectWallet } = useAccount();
 
   useEffect(() => {
     fetchBalance();
@@ -23,7 +23,7 @@ const MyInfo = () => {
         <div className="mt-4">
           <p className="text-xl font-bold">Connected: {account}</p>
           <p className="text-lg">
-          Balance: {balance} ETH
+          Balance: {balance} {chainInfo?.currency}
         </p>
           <button
             className="px-4 py-2 bg-red-500 text-white rounded-md"
