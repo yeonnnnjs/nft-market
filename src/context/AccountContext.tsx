@@ -23,7 +23,9 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
       const ethereum = window.ethereum;
       if (ethereum) {
         const provider = new ethers.BrowserProvider(ethereum);
-        const selectedAccount = sessionStorage.getItem('userAccount') || await provider.send('eth_requestAccounts', []);
+        const selectedAccount = sessionStorage.getItem('userAccount') || await provider.send('eth_requestAccounts', []).then(accounts => {
+          return accounts[0];
+        });
         const network = await provider.getNetwork();
         const chain = getChainInfo(parseFloat(network.chainId));
 
@@ -31,7 +33,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         setProvider(provider);
         setAccount(selectedAccount);
 
-        sessionStorage.setItem('userAccount', selectedAccount);
+        sessionStorage.setItem('userAccount', [selectedAccount]);
       } else {
         console.log("MetaMask not installed; using read-only defaults");
         const provider = ethers.getDefaultProvider();

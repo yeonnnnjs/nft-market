@@ -86,6 +86,8 @@ const MyNFTs = () => {
 
     const fetchNFTList = async () => {
       try {
+        console.log(account);
+        
         const result = await contract.getOwnedNFTs(account);
         const array = convertToObjects(result);
         console.log(array);
