@@ -28,21 +28,15 @@ const NavBar: React.FC<NavBarProps> = ({ onSelectMenuItem }) => {
                             </span>
                             <span
                                 className="cursor-pointer text-white hover:text-gray-300"
-                                onClick={() => onSelectMenuItem('MyInfo')}
-                            >
-                                내 정보
-                            </span>
-                            <span
-                                className="cursor-pointer text-white hover:text-gray-300"
-                                onClick={() => onSelectMenuItem('MyNFTs')}
-                            >
-                                내 NFT
-                            </span>
-                            <span
-                                className="cursor-pointer text-white hover:text-gray-300"
                                 onClick={() => onSelectMenuItem('MintNFT')}
                             >
                                 NFT 만들기
+                            </span>
+                            <span
+                                className="cursor-pointer text-white hover:text-gray-300"
+                                onClick={() => onSelectMenuItem('MyPage')}
+                            >
+                                마이페이지
                             </span>
                         </>
                     ) : (

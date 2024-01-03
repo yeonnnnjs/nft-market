@@ -1,17 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MintNFTForm from '../src/components/MintNFTForm';
-import MyNFTs from '../src/components/MyNFTs';
-import MyInfo from '@/src/components/MyInfo';
 import Error from '@/src/components/Error';
 import AllNFTs from '@/src/components/AllNFTs';
+import MyPage from '@/src/components/MyPage';
 import { useErrorContext } from '@/src/context/ErrorContext';
+import { useAccount } from '@/src/context/AccountContext';
 
 interface MainContentProps {
   selectedMenuItem: string;
 }
 
 const Main: React.FC<MainContentProps> = ({ selectedMenuItem }) => {
-  const { errorMsg } = useErrorContext();
+  const { errorMsg, setErrorMsg } = useErrorContext();
+  const { account } = useAccount();
+
+  useEffect(() => {
+    if(!account) {
+      setErrorMsg("로그인이 필요합니다!");
+    } else {
+      setErrorMsg(null);
+    }
+  }, [])
 
   return (
     <>
@@ -20,9 +29,8 @@ const Main: React.FC<MainContentProps> = ({ selectedMenuItem }) => {
       ) : (
         <>
           {selectedMenuItem === 'AllNFTs' && <AllNFTs />}
-          {selectedMenuItem === 'MyInfo' && <MyInfo />}
-          {selectedMenuItem === 'MyNFTs' && <MyNFTs />}
           {selectedMenuItem === 'MintNFT' && <MintNFTForm />}
+          {selectedMenuItem === 'MyPage' && <MyPage />}
         </>
       )}
     </>

@@ -18,7 +18,6 @@ export const getToNFTStorage = async (tokenId: number, uri: string) => {
   try {
     const response = await fetch(metadataUri);
     const data = await response.json();
-
     const nft = {
       id : tokenId,
       image : data.image.replace('ipfs://', 'https://ipfs.io/ipfs/'),

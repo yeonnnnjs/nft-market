@@ -73,7 +73,6 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
     setAccount(null);
     setChainInfo(null);
     sessionStorage.removeItem('userAccount');
-
   };
 
   useEffect(() => {

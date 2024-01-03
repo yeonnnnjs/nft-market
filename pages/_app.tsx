@@ -6,7 +6,7 @@ import Head from 'next/head';
 import NavBar from '@/src/components/NavBar';
 
 function NftMarket() {
-    const [selectedMenuItem, setSelectedMenuItem] = useState<string>('MyInfo');
+    const [selectedMenuItem, setSelectedMenuItem] = useState<string>('AllNFTs');
 
     const handleSelectMenuItem = (menuItem: string) => {
         setSelectedMenuItem(menuItem);
