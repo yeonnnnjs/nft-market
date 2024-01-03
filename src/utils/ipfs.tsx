@@ -1,6 +1,6 @@
-import { NFTStorage } from 'nft.storage'
+import { NFTStorage } from 'nft.storage';
 
-async function uploadToNFTStorage(file: File, name: string, description: string) {
+export const uploadToNFTStorage = async (file: File, name: string, description: string) => {
   const apiKey = process.env.NEXT_PUBLIC_IPFS_API_KEY;
   const client = new NFTStorage({ token: apiKey });
 
@@ -9,9 +9,24 @@ async function uploadToNFTStorage(file: File, name: string, description: string)
     description: description,
     image: file,
   })
-  console.log(metadata.data);
+  return metadata.url;
+};
 
-  return metadata.data;
-}
+export const getToNFTStorage = async (tokenId: number, uri: string) => {
+  const metadataUri = uri.replace('ipfs://', 'https://ipfs.io/ipfs/');
 
-export default uploadToNFTStorage;
+  try {
+    const response = await fetch(metadataUri);
+    const data = await response.json();
+
+    const nft = {
+      id : tokenId,
+      image : data.image.replace('ipfs://', 'https://ipfs.io/ipfs/'),
+      name : data.name,
+      description : data.description
+    }
+    return nft;
+  } catch (error) {
+    console.error('Error fetching metadata:', error);
+  }
+};

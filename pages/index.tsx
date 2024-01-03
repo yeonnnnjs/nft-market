@@ -19,7 +19,7 @@ const Main: React.FC<MainContentProps> = ({ selectedMenuItem }) => {
         <Error />
       ) : (
         <>
-        {selectedMenuItem === 'AllNFTs' && <AllNFTs />}
+          {selectedMenuItem === 'AllNFTs' && <AllNFTs />}
           {selectedMenuItem === 'MyInfo' && <MyInfo />}
           {selectedMenuItem === 'MyNFTs' && <MyNFTs />}
           {selectedMenuItem === 'MintNFT' && <MintNFTForm />}

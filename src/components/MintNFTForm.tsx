@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from '../context/AccountContext';
 import { getContractAddress } from '../utils/contractPicker';
-import uploadToNFTStorage from '../utils/ipfs';
+import { uploadToNFTStorage } from '../utils/ipfs'; 
 import 'tailwindcss/tailwind.css';
 
 const MintNFTForm = () => {
@@ -47,14 +47,6 @@ const MintNFTForm = () => {
             "constant": false,
             "inputs": [
               {
-                "name": "name",
-                "type": "string"
-              },
-              {
-                "name": "description",
-                "type": "string"
-              },
-              {
                 "name": "uri",
                 "type": "string"
               }
@@ -69,8 +61,7 @@ const MintNFTForm = () => {
 
         const signer = await provider.getSigner();
         const nftContract = new ethers.Contract(contractAddress, contractAbi, signer);
-        const url = metadata.image.href;
-        const mintTransaction = await nftContract.safeMint(metadata.name, metadata.description, url, { gasLimit: 500000 });
+        const mintTransaction = await nftContract.safeMint(metadata, { gasLimit: 500000 });
         await mintTransaction.wait();
 
         console.log('NFT successfully minted!');

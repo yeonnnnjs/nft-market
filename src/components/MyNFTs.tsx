@@ -2,33 +2,9 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from '../context/AccountContext';
 import { getContractAddress } from '../utils/contractPicker';
+import { getToNFTStorage } from '../utils/ipfs';
 import TransferNFTForm from './TransferNFTForm';
 import 'tailwindcss/tailwind.css';
-
-function convertToObjects(list) {
-  const numRows = list.length;
-  const numCols = list[0].length;
-
-  const resultArray = [];
-
-  for (let col = 0; col < numCols; col++) {
-    const obj = {};
-
-    for (let row = 0; row < numRows; row++) {
-      if (row === 0) {
-        obj['id'] = list[row][col];
-      } else if (row === 1) {
-        obj['image'] = list[row][col].replace('ipfs://', 'https://ipfs.io/ipfs/');
-      } else if (row === 2) {
-        obj['name'] = list[row][col];
-      } else if (row === 3) {
-        obj['description'] = list[row][col];
-      }
-    }
-    resultArray.push(obj);
-  }
-  return resultArray;
-}
 
 const MyNFTs = () => {
   const [nftList, setNFTList] = useState([]);
@@ -37,7 +13,7 @@ const MyNFTs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(true);
 
-  const handleNFTSelect = (index, type) => {
+  const handleNFTSelect = (index : number, type : boolean) => {
     setModalType(type);
     setSelectedNFT(nftList[index]);
     setIsModalOpen(true);
@@ -49,54 +25,91 @@ const MyNFTs = () => {
 
   useEffect(() => {
     const contractAddress = getContractAddress(chainInfo?.currency);
-    const contractAbi = [
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "owner",
-            "type": "address"
-          }
-        ],
-        "name": "getOwnedNFTs",
-        "outputs": [
-          {
-            "name": "ownedNFTs",
-            "type": "uint256[]"
-          },
-          {
-            "name": "tokenURIs",
-            "type": "string[]"
-          },
-          {
-            "name": "tokenNames",
-            "type": "string[]"
-          },
-          {
-            "name": "tokenDescriptions",
-            "type": "string[]"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      }
+    const contractAbi = [{
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenOfOwnerByIndex",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenURI",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
     ];
 
     const contract = new ethers.Contract(contractAddress, contractAbi, provider);
 
-    const fetchNFTList = async () => {
+    const getOwnedNFTs = async () => {
       try {
-        const result = await contract.getOwnedNFTs(account);
-        const array = convertToObjects(result);
-        setNFTList(array);
+        const balance = await contract.balanceOf(account);
+        console.log(balance);
+        const ownedNFTs = [];
+        for (let i = 0; i < parseFloat(balance); i++) {
+          const tokenId = await contract.tokenOfOwnerByIndex(account, i);
+          const uri = await contract.tokenURI(tokenId);
+          const nft = await getToNFTStorage(tokenId, uri);
+          ownedNFTs.push(nft);
+        }
+        setNFTList(ownedNFTs);
+        console.log("Owned NFTs:", ownedNFTs);
       } catch (error) {
-        console.error('Error fetching NFT list:', error);
+        console.error("Error:", error);
       }
-    };
+    }
 
     if (account) {
-      fetchNFTList();
+      getOwnedNFTs();
     }
   }, [account, provider]);
 

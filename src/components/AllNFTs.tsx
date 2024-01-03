@@ -2,32 +2,8 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from '../context/AccountContext';
 import { getContractAddress } from '../utils/contractPicker';
-import TransferNFTForm from './TransferNFTForm';
 import 'tailwindcss/tailwind.css';
-
-function convertToObjects(list) {
-  const numRows = list.length;
-  const numCols = list[0].length;
-
-  const resultArray = [];
-
-  for (let row = 0; row < numRows; row++) {
-    const obj = {};
-    for (let col = 0; col < numCols; col++) {
-      if (col === 0) {
-        obj['id'] = list[row][col];
-      } else if (col === 1) {
-        obj['image'] = list[row][col].replace('ipfs://', 'https://ipfs.io/ipfs/');
-      } else if (col === 2) {
-        obj['name'] = list[row][col];
-      } else if (col === 3) {
-        obj['description'] = list[row][col];
-      }
-    }
-    resultArray.push(obj);
-  }
-  return resultArray;
-}
+import { getToNFTStorage } from '../utils/ipfs';
 
 const AllNFTs = () => {
   const [nftList, setNFTList] = useState([]);
@@ -35,7 +11,7 @@ const AllNFTs = () => {
   const [selectedNFT, setSelectedNFT] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleNFTSelect = (index) => {
+  const handleNFTSelect = (index : number) => {
     setSelectedNFT(nftList[index]);
     setIsModalOpen(true);
   };
@@ -46,43 +22,86 @@ const AllNFTs = () => {
 
   useEffect(() => {
     const contractAddress = getContractAddress(chainInfo?.currency);
-    const contractAbi = [
+    const contractAbi = [{
+      "constant": true,
+      "inputs": [
         {
-          "constant": true,
-          "inputs": [],
-          "name": "getAllNFTs",
-          "outputs": [
-            {
-              "name": "",
-              "type": "tuple[]",
-              "components": [
-                {"name": "tokenId", "type": "uint256"},
-                {"name": "tokenURI", "type": "string"},
-                {"name": "name", "type": "string"},
-                {"name": "description", "type": "string"}
-              ]
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
+          "name": "_owner",
+          "type": "address"
         }
-      ];
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenByIndex",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenURI",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+    ];
 
     const contract = new ethers.Contract(contractAddress, contractAbi, provider);
 
-    const fetchNFTList = async () => {
+    const getAllNFTs = async () => {
       try {
-        const result = await contract.getAllNFTs();
-        const array = convertToObjects(result);
-        setNFTList(array);
+        const balance = await contract.balanceOf(account);
+        const ownedNFTs = [];
+        for (let i = 0; i < parseFloat(balance); i++) {
+          const tokenId = await contract.tokenByIndex(i);
+          const uri = await contract.tokenURI(tokenId);
+          const nft = await getToNFTStorage(tokenId, uri);
+          ownedNFTs.push(nft);
+        }
+        setNFTList(ownedNFTs);
+        console.log("Owned NFTs:", ownedNFTs);
       } catch (error) {
-        console.error('Error fetching NFT list:', error);
+        console.error("Error:", error);
       }
-    };
+    }
 
     if (account) {
-      fetchNFTList();
+      getAllNFTs();
     }
   }, [account, provider]);
 
@@ -97,12 +116,12 @@ const AllNFTs = () => {
           </div>
         ) : (
           nftList.map((nft, index) => (
-            <div key={index} className="bg-white p-4 rounded-md shadow-md flex flex-col items-center">
+            <div key={index} className="bg-white p-4 rounded-md shadow-md flex flex-col items-center justify-between">
               <img src={nft.image} alt={nft.name} className="mb-2 rounded-md" />
-              <h2 className="text-lg font-semibold">{nft.name}</h2>
-              <p className="text-gray-500">{nft.description}</p>
-              <div className="flex gap-4">
-                <button onClick={() => handleNFTSelect(index)} className="text-blue-500">상세보기</button>
+              <div className="flex flex-col h-full items-center">
+                  <h2 className="text-lg font-semibold">{nft.name}</h2>
+                  <p className="text-gray-500">{nft.description}</p>
+                  <button onClick={() => handleNFTSelect(index)} className="text-blue-500">상세보기</button>
               </div>
             </div>
           ))
@@ -110,14 +129,14 @@ const AllNFTs = () => {
       }
 
       {isModalOpen && (
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-4 rounded-md shadow-md">
-              <img src={selectedNFT?.image} alt={selectedNFT?.name} className="mb-2 rounded-md" />
-              <h2 className="text-lg font-semibold">{selectedNFT?.name}</h2>
-              <p className="text-gray-500">{selectedNFT?.description}</p>
-              <button onClick={handleCloseModal} className="text-blue-500">닫기</button>
-            </div>
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded-md shadow-md">
+            <img src={selectedNFT?.image} alt={selectedNFT?.name} className="mb-2 rounded-md" />
+            <h2 className="text-lg font-semibold">{selectedNFT?.name}</h2>
+            <p className="text-gray-500">{selectedNFT?.description}</p>
+            <button onClick={handleCloseModal} className="text-blue-500">닫기</button>
           </div>
+        </div>
       )}
     </div>
   );
