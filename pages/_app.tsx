@@ -1,17 +1,10 @@
 import { AccountProvider } from '@/src/context/AccountContext';
 import { ErrorProvider } from '@/src/context/ErrorContext';
-import { useState, useEffect } from 'react';
-import Main from '@/pages/index'
+import type { AppProps } from "next/app";
 import Head from 'next/head';
-import NavBar from '@/src/components/NavBar';
+import Layout from '@/src/components/Layout';
 
-function NftMarket() {
-    const [selectedMenuItem, setSelectedMenuItem] = useState<string>('AllNFTs');
-
-    const handleSelectMenuItem = (menuItem: string) => {
-        setSelectedMenuItem(menuItem);
-    };
-
+function NftMarket({ Component, pageProps }: AppProps) {
     return (
         <ErrorProvider>
             <AccountProvider>
@@ -21,8 +14,9 @@ function NftMarket() {
                         <meta name="description" content="NFT Marketplace by yeonnnnjs" />
                         <link rel="icon" href="/favicon.ico" />
                     </Head>
-                    <NavBar onSelectMenuItem={handleSelectMenuItem} />
-                    <Main selectedMenuItem={selectedMenuItem} />
+                    <Layout>
+                        <Component {...pageProps} />
+                    </Layout>
                 </>
             </AccountProvider>
         </ErrorProvider>

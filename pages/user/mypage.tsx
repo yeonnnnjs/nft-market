@@ -1,31 +1,36 @@
 import { useEffect, useState } from 'react';
-import { useAccount } from '../context/AccountContext';
+import { useAccount } from '../../src/context/AccountContext';
 import { ethers } from 'ethers';
-import { getContractAddress } from '../utils/contractPicker';
-import { getToNFTStorage } from '../utils/ipfs';
-import NFTList from './NFTList';
+import { getContractAddress } from '../../src/utils/contractPicker';
+import { getToNFTStorage } from '../../src/utils/ipfs';
+import NFTList from '../../src/components/NFTList';
 import 'tailwindcss/tailwind.css';
+
+interface NFT {
+    id: number;
+    image: string;
+    name: string;
+    description: string;
+}
 
 const MyPage = () => {
     const [balance, setBalance] = useState<number | null>(null);
     const { account, provider, chainInfo, connectWallet } = useAccount();
-    const [nftList, setNFTList] = useState([]);
+    const [nftList, setNFTList] = useState<NFT[]>([]);
 
     useEffect(() => {
         if (account) {
+            fetchBalance();
             getOwnedNFTs();
         }
     }, []);
 
     useEffect(() => {
         if (account) {
+            fetchBalance();
             getOwnedNFTs();
         }
     }, [account, provider]);
-
-    useEffect(() => {
-        fetchBalance();
-    }, [account]);
 
     const getOwnedNFTs = async () => {
         const contractAddress = getContractAddress(chainInfo?.currency);
@@ -95,7 +100,7 @@ const MyPage = () => {
         const contract = new ethers.Contract(contractAddress, contractAbi, provider);
         try {
             const balance = await contract.balanceOf(account);
-            const ownedNFTs = [];
+            const ownedNFTs: NFT[] = [];
             for (let i = 0; i < parseFloat(balance); i++) {
                 const tokenId = await contract.tokenOfOwnerByIndex(account, i);
                 const uri = await contract.tokenURI(tokenId);

@@ -1,4 +1,4 @@
-export const getContractAddress = (currency: string): string => {
+export const getContractAddress = (currency: string | undefined): string => {
     switch (currency) {
       case 'ETH':
         return process.env.NEXT_PUBLIC_ETH_CONTRACT_ADDRESS || "0x25b9e208a7077f18ffb69364cbb150606c3d5a50";

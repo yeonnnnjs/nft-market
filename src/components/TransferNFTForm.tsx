@@ -3,7 +3,11 @@ import { ethers } from 'ethers';
 import { useAccount } from '../context/AccountContext';
 import { getContractAddress } from '../utils/contractPicker';
 
-const TransferNFTForm = ({ nftId }) => {
+interface TransferNFTProps {
+  nftId: number;
+}
+
+const TransferNFTForm: React.FC<TransferNFTProps> = ({ nftId }) => {
   const [to, setTo] = useState('');
   const { provider, chainInfo } = useAccount();
 

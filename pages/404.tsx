@@ -1,7 +1,7 @@
 import React from 'react';
-import { useErrorContext } from '../context/ErrorContext';
+import { useErrorContext } from '@/src/context/ErrorContext';
 
-const Error = () => {
+const ErrorPage = () => {
     const { errorMsg } = useErrorContext();
   return (
     <div className="flex items-center bg-theme-background text-theme-text justify-center h-screen bg-gray-100">
@@ -13,4 +13,4 @@ const Error = () => {
   );
 };
 
-export default Error;
+export default ErrorPage;

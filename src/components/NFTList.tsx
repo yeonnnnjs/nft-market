@@ -10,9 +10,14 @@ interface NFT {
     description: string;
 }
 
-const NFTList = ({ list, isMyNFTs }) => {
+interface NFTListProps {
+    list: NFT[];
+    isMyNFTs: boolean;
+}
+
+const NFTList: React.FC<NFTListProps> = ({ list, isMyNFTs }) => {
     const [modalType, setModalType] = useState(false);
-    const [selectedNFT, setSelectedNFT] = useState(null);
+    const [selectedNFT, setSelectedNFT] = useState<NFT>();
     const [filteredNFTList, setFilteredNFTList] = useState<NFT[]>(list);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,10 +71,6 @@ const NFTList = ({ list, isMyNFTs }) => {
                             <div className="flex flex-col h-full items-center">
                                 <h2 className="text-lg font-semibold">{nft.name}</h2>
                                 <p className="text-gray-500">{nft.description}</p>
-                                <button onClick={() => handleNFTSelect(index, true)} className="text-blue-500">
-                                    상세보기
-                                </button>
-                                {isMyNFTs && <button onClick={() => handleNFTSelect(index, false)} className="text-blue-500">전송하기</button>}
                             </div>
                         </Link>
                     </div>
@@ -89,7 +90,7 @@ const NFTList = ({ list, isMyNFTs }) => {
                 ) : (
                     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
                         <div className="bg-white p-4 rounded-md shadow-md">
-                            <TransferNFTForm nftId={selectedNFT.id} />
+                            <TransferNFTForm nftId={selectedNFT?.id} />
                             <button onClick={handleCloseModal} className="text-blue-500">닫기</button>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface ErrorContextProps {
   errorMsg: string;
@@ -8,7 +8,15 @@ interface ErrorContextProps {
 const ErrorContext = createContext<ErrorContextProps | undefined>(undefined);
 
 export const ErrorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  useEffect(() => {
+    if (errorMsg) {
+      window.location.href = '/404';
+    }
+  }, [errorMsg]);
+
+
   return (
     <ErrorContext.Provider value={{ errorMsg, setErrorMsg }}>
       {children}

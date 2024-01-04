@@ -30,7 +30,6 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
       } else {
         setErrorMsg(null);
       }
-
       setChainInfo(newChain);
     } catch (error) {
       console.error('Error handling chain change:', error.message);
