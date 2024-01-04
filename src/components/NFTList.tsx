@@ -12,26 +12,12 @@ interface NFT {
 
 interface NFTListProps {
     list: NFT[];
-    isMyNFTs: boolean;
 }
 
-const NFTList: React.FC<NFTListProps> = ({ list, isMyNFTs }) => {
-    const [modalType, setModalType] = useState(false);
-    const [selectedNFT, setSelectedNFT] = useState<NFT>();
+const NFTList: React.FC<NFTListProps> = ({ list }) => {
     const [filteredNFTList, setFilteredNFTList] = useState<NFT[]>(list);
     const [searchTerm, setSearchTerm] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const { chainInfo } = useAccount();
-
-    const handleNFTSelect = (index: number, type: boolean) => {
-        setModalType(type);
-        setSelectedNFT(list[index]);
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
 
     useEffect(() => {
         const filteredNFTs = list.filter((nft) =>
@@ -73,26 +59,6 @@ const NFTList: React.FC<NFTListProps> = ({ list, isMyNFTs }) => {
                                 <p className="text-gray-500">{nft.description}</p>
                             </div>
                         </Link>
-                    </div>
-                ))
-            )}
-
-            {isModalOpen && (
-                (modalType ? (
-                    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-                        <div className="bg-white p-4 rounded-md shadow-md w-50 h-50">
-                            <img src={selectedNFT?.image} alt={selectedNFT?.name} className="mb-2 rounded-md" />
-                            <h2 className="text-lg font-semibold">{selectedNFT?.name}</h2>
-                            <p className="text-gray-500">{selectedNFT?.description}</p>
-                            <button onClick={handleCloseModal} className="text-blue-500">닫기</button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-                        <div className="bg-white p-4 rounded-md shadow-md">
-                            <TransferNFTForm nftId={selectedNFT?.id} />
-                            <button onClick={handleCloseModal} className="text-blue-500">닫기</button>
-                        </div>
                     </div>
                 ))
             )}

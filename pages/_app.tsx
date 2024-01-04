@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Layout from '@/src/components/Layout';
 
 function NftMarket({ Component, pageProps }: AppProps) {
+
     return (
         <ErrorProvider>
             <AccountProvider>

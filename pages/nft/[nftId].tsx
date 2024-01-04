@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 import { getContractAddress } from '@/src/utils/contractPicker';
 import { useAccount } from '@/src/context/AccountContext';
 import { useErrorContext } from '@/src/context/ErrorContext';
+import checkAuth from '@/src/utils/auth';
 
 interface NFT {
     id: number;
@@ -59,7 +60,7 @@ const DetailNFT = () => {
     }
 
     useEffect(() => {
-        console.log(account);
+        checkAuth(account);
         if(account) {
             getNFT();
         }

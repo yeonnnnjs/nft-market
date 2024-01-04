@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { getContractAddress } from '../../src/utils/contractPicker';
 import { getToNFTStorage } from '../../src/utils/ipfs';
 import NFTList from '../../src/components/NFTList';
+import checkAuth from '@/src/utils/auth';
 import 'tailwindcss/tailwind.css';
 
 interface NFT {
@@ -19,13 +20,15 @@ const MyPage = () => {
     const [nftList, setNFTList] = useState<NFT[]>([]);
 
     useEffect(() => {
+        checkAuth(account);
         if (account) {
             fetchBalance();
             getOwnedNFTs();
-        }
+        } 
     }, []);
 
     useEffect(() => {
+        checkAuth(account);
         if (account) {
             fetchBalance();
             getOwnedNFTs();

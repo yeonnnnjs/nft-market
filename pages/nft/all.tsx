@@ -112,10 +112,7 @@ const AllNFTs = () => {
 
   return (
     <div className='pt-[8vh]'>
-      <NFTList
-        list={nftList}
-        isMyNFTs={false}
-      />
+      <NFTList list={nftList} />
     </div>
   );
 };

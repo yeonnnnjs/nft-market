@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from '../../src/context/AccountContext';
 import { getContractAddress } from '../../src/utils/contractPicker';
 import { uploadToNFTStorage } from '../../src/utils/ipfs';
+import checkAuth from '@/src/utils/auth';
 import 'tailwindcss/tailwind.css';
 
 const MintNFTForm = () => {
@@ -10,7 +11,11 @@ const MintNFTForm = () => {
   const [name, setName] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [description, setDescription] = useState<string>('');
-  const { provider, chainInfo } = useAccount();
+  const { account, provider, chainInfo } = useAccount();
+
+  useEffect(() => {
+    checkAuth(account);
+  }, [])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
