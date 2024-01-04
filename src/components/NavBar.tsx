@@ -12,12 +12,10 @@ const NavBar: React.FC<NavBarProps> = ({ onSelectMenuItem }) => {
     const { errorMsg } = useErrorContext();
 
     return (
-        <nav className="bg-blue-500 p-4">
-            <div className="container mx-auto flex justify-between items-center">
-                <div className="flex">
-                    <h1 className="text-white text-2xl font-bold">NFT Marketplace</h1>
-                </div>
-                <div className="flex space-x-4">
+        <nav className="bg-blue-500 p-4 fixed w-full h-[8vh]">
+            <div className="container mx-auto flex justify-between">
+                <h1 className="text-white text-2xl font-bold">NFT Marketplace</h1>
+                <div className="space-x-4 flex items-center">
                     {account && !errorMsg ? (
                         <>
                             <span
@@ -43,10 +41,7 @@ const NavBar: React.FC<NavBarProps> = ({ onSelectMenuItem }) => {
                         <></>
                     )}
                 </div>
-
-                <div className="text-white flex items-center">
-                    <WalletConnectButton />
-                </div>
+                <WalletConnectButton />
             </div>
         </nav>
     );

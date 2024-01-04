@@ -118,7 +118,7 @@ const MyPage = () => {
     };
 
     return (
-        <>
+        <div className='pt-[8vh]'>
             <div className="p-4 bg-theme-background text-theme-text bg-gray-100 rounded-md shadow-md">
                 {account ? (
                     <div className="mt-4 bg-theme-background text-theme-text">
@@ -136,14 +136,14 @@ const MyPage = () => {
                     </button>
                 )}
             </div>
-            <div className='col-span-full flex items-center justify-center mt-8'>
+            <div className='w-full flex items-center justify-center mt-8'>
                 <p className="text-xl font-bold">내 NFT</p>
             </div>
             <NFTList
                 list={nftList}
                 isMyNFTs={true}
             />
-        </>
+        </div>
     );
 };
 
