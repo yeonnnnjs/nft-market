@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { useAccount } from '../../src/context/AccountContext';
+import { chainList } from '@/public/data/ChainList';
 import { getContractAddress } from '../../src/utils/contractPicker';
 import { getToNFTStorage } from '../../src/utils/ipfs';
 import NFTList from '../../src/components/NFTList';
@@ -15,41 +15,37 @@ interface NFT {
 
 const AllNFTs = () => {
   const [nftList, setNFTList] = useState<NFT[]>([]);
-  const { account, provider, chainInfo } = useAccount();
 
   useEffect(() => {
-    if (account) {
-      getAllNFTs();
-    }
+    const fetchData = async () => {
+      const promises = chainList.map(async (chain) => {
+        return getAllNFTs(chain);
+      });
+      const results = await Promise.all(promises);
+      const flattenedNFTs = results.flat();
+      setNFTList(flattenedNFTs);
+    };
+
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    if (account) {
-      getAllNFTs();
-    }
-  }, [account, provider]);
-
-  const getAllNFTs = async () => {
-    const contractAddress = getContractAddress(chainInfo?.currency);
-    const contractAbi = [{
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "balanceOf",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
+  const getAllNFTs = async (chain) => {
+    const contractAddress = getContractAddress(chain?.currency);
+    const contractAbi = [
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
     {
       "constant": true,
       "inputs": [
@@ -89,22 +85,21 @@ const AllNFTs = () => {
       "type": "function"
     }
     ];
+    const provider = new ethers.JsonRpcProvider(chain?.rpcUrl);
     const contract = new ethers.Contract(contractAddress, contractAbi, provider);
 
     try {
-      const balance = await contract.balanceOf(account);
-      const ownedNFTs: NFT[] = [];
+      const totalSupply = await contract.totalSupply();
 
-      for (let i = 0; i < parseFloat(balance.toString()); i++) {
+      const promiseNFTs = []; 
+      for (let i = 0; i < parseFloat(totalSupply.toString()); i++) {
         const tokenId = await contract.tokenByIndex(i);
         const uri = await contract.tokenURI(tokenId);
-        getToNFTStorage(tokenId, uri).then((nft) => {
-          ownedNFTs.push(nft);
-          setNFTList(ownedNFTs);
-        });
+        promiseNFTs.push(getToNFTStorage(tokenId, uri));
       }
-
-      console.log('Owned NFTs:', ownedNFTs);
+      
+      const allNFTs = await Promise.all(promiseNFTs);
+      return allNFTs;
     } catch (error) {
       console.error('Error:', error);
     }
