@@ -1,13 +1,6 @@
 import NFTList from '../../src/components/NFTList';
 import 'tailwindcss/tailwind.css';
-import { getAllNFTs } from '../api/nftApis';
-
-interface NFT {
-  id: number;
-  image: string;
-  name: string;
-  description: string;
-}
+import { getAllNFTs } from '@/src/utils/contractApi';
 
 const AllNFTs = ({nftList}) => {
   return (

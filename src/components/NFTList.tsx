@@ -47,7 +47,7 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
             ) : (
                 filteredNFTList.map((nft, index) => (
                     <div key={index} className="bg-white p-4 rounded-md shadow-md flex flex-col items-center justify-between">
-                        <Link href={`/nft/${encodeURIComponent(nft.id)}`}>
+                        <Link href={`/nft/${encodeURIComponent(nft.nftId)}`}>
                             <img
                                 src={nft.image}
                                 alt={nft.name}
