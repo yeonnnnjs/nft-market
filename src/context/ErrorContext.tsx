@@ -1,7 +1,9 @@
+import { useRouter } from 'next/router';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
+
 interface ErrorContextProps {
-  errorMsg: string;
+  errorMsg: string | null;
   setErrorMsg: (message: string | null) => void;
 }
 
@@ -9,13 +11,14 @@ const ErrorContext = createContext<ErrorContextProps | undefined>(undefined);
 
 export const ErrorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [errorMsg, setErrorMsg] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
-    if (errorMsg) {
-      window.location.href = '/404';
+    if (errorMsg && router.pathname != '/error') {
+      window.location.href = '/error';
+      setErrorMsg(null);
     }
   }, [errorMsg]);
-
 
   return (
     <ErrorContext.Provider value={{ errorMsg, setErrorMsg }}>

@@ -18,23 +18,22 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [account, setAccount] = useState<string | null>(null);
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
   const [chainInfo, setChainInfo] = useState<Chain | null>(null);
-  const { setErrorMsg } = useErrorContext();
-
-  const handleChainChange = async () => {
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const network = await provider?.getNetwork();
-      const newChain = getChainInfo(parseFloat(network?.chainId));
-      if (!newChain) {
-        setErrorMsg("지원하지 않는 네트워크입니다!");
-      } else {
-        setErrorMsg(null);
-      }
-      setChainInfo(newChain);
-    } catch (error) {
-      console.error('Error handling chain change:', error.message);
-    }
-  };
+  // const { setErrorMsg } = useErrorContext();
+  // const handleChainChange = async () => {
+  //   try {
+  //     const provider = new ethers.BrowserProvider(window.ethereum);
+  //     const network = await provider?.getNetwork();
+  //     const newChain = getChainInfo(parseFloat(network?.chainId));
+  //     if (!newChain) {
+  //       setErrorMsg("지원하지 않는 네트워크입니다!");
+  //     } else {
+  //       setErrorMsg(null);
+  //     }
+  //     setChainInfo(newChain);
+  //   } catch (error) {
+  //     console.error('Error handling chain change:', error.message);
+  //   }
+  // };
 
   const connectWallet = async () => {
     try {
@@ -46,12 +45,12 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         });
         const network = await provider.getNetwork();
         const chain = getChainInfo(parseFloat(network.chainId));
-        if (!chain) {
-          setErrorMsg("지원하지 않는 네트워크입니다!");
-        }
-        else {
-          setErrorMsg(null);
-        }
+        // if (!chain) {
+        //   setErrorMsg("지원하지 않는 네트워크입니다!");
+        // }
+        // else {
+        //   setErrorMsg(null);
+        // }
         setChainInfo(chain);
         setProvider(provider);
         setAccount(selectedAccount);
@@ -92,7 +91,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
       });
 
-      ethereum.on('chainChanged', handleChainChange);
+      // ethereum.on('chainChanged', handleChainChange);
     }
   }, []);
 

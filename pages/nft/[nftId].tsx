@@ -1,12 +1,4 @@
 import TransferNFTForm from '../../src/components/TransferNFTForm';
-import { useRouter } from 'next/router';
-import { getToNFTStorage } from '@/src/utils/ipfs';
-import { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import { getContractAddress } from '@/src/utils/contractPicker';
-import { useAccount } from '@/src/context/AccountContext';
-import { useErrorContext } from '@/src/context/ErrorContext';
-import checkAuth from '@/src/utils/auth';
 
 interface NFT {
     id: number;
@@ -15,57 +7,7 @@ interface NFT {
     description: string;
 }
 
-const DetailNFT = () => {
-    const router = useRouter();
-    const [nft, setNft] = useState<NFT>();
-    const { chainInfo, provider, account } = useAccount();
-    const { setErrorMsg } = useErrorContext();
-    const tokenId = parseFloat(router.query.nftId);
-
-    const isValidNftId = async () => {
-        const contractAddress = getContractAddress(chainInfo?.currency);
-        const contractAbi = [{
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "_tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenURI",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }];
-        console.log("address : ", contractAddress, "abi : ", contractAbi, "provider : ", provider);
-        const contract = new ethers.Contract(contractAddress, contractAbi, provider);
-        const uri = await contract.tokenURI(tokenId);
-        if(!uri) {
-            setErrorMsg("[404] 잘못된 접근입니다!");
-        } else {
-            return uri;
-        }
-    }
-
-    const getNFT = async () => {
-        const uri = await isValidNftId();
-        const metadata = await getToNFTStorage(tokenId, uri);
-        setNft(metadata);
-    }
-
-    useEffect(() => {
-        checkAuth(account);
-        if(account) {
-            getNFT();
-        }
-    }, [account]);
-
+const DetailNFT = (nft: NFT) => {
     return (
         <div className="w-full h-full">
             <div className="bg-white p-4 rounded-md shadow-md w-50 h-50">
@@ -79,5 +21,25 @@ const DetailNFT = () => {
         </div>
     );
 };
+
+export const getStaticPaths = async () => {
+    const response = await fetch(process.env.NEXT_PUBLIC_ADDRESS + "/api/nftlist/getnum");
+    const { length } = await response.json();
+    const paths = Array.from({ length }, (_, index) => ({ params: { nftId: index.toString() } }));
+    return { paths, fallback: false };
+}
+
+export const getStaticProps = async (context) => {
+    const { params } = context;
+    const nftId = params.nftId;
+    console.log(context);
+    const response = await fetch(process.env.NEXT_PUBLIC_ADDRESS + "/api/nft/" + nftId);
+    const metadata = await response.json();
+    return {
+        props: {
+            nft: metadata
+        }
+    }
+}
 
 export default DetailNFT;

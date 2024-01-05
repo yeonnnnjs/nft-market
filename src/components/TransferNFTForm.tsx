@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from '../context/AccountContext';
-import { getContractAddress } from '../utils/contractPicker';
+import { getContractAddress } from '../lib/contractPicker';
 
 interface TransferNFTProps {
   nftId: number;

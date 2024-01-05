@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useAccount } from '../../src/context/AccountContext';
 import { ethers } from 'ethers';
-import { getContractAddress } from '../../src/utils/contractPicker';
-import { getToNFTStorage } from '../../src/utils/ipfs';
+import { getContractAddress } from '../../src/lib/contractPicker';
+import { getToNFTStorage } from '../../src/lib/ipfs';
 import NFTList from '../../src/components/NFTList';
-import checkAuth from '@/src/utils/auth';
+import checkAuth from '@/src/lib/auth';
 import 'tailwindcss/tailwind.css';
 
 interface NFT {

@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import Head from 'next/head';
 import Layout from '@/src/components/Layout';
 
-function NftMarket({ Component, pageProps }: AppProps) {
+const NftMarket = ({ Component, pageProps }: AppProps) => {
 
     return (
         <ErrorProvider>

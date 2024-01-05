@@ -5,7 +5,7 @@ export const getContractAddress = (currency: string | undefined): string => {
       case 'BFC':
         return process.env.NEXT_PUBLIC_BFC_CONTRACT_ADDRESS || "0xf280035fe74c2888e10277d21e39aaecf18655c5";
       default:
-        return '';
+        return process.env.NEXT_PUBLIC_BFC_CONTRACT_ADDRESS || "0xf280035fe74c2888e10277d21e39aaecf18655c5";
     }
   };
   

@@ -1,14 +1,11 @@
 import React, { useEffect } from 'react';
 
-
 const Main = () => {
-  useEffect(() => {
-    window.location.href = '/nft/all';
-  }, []);
 
   return (
-    <>
-    </>
+    <div className='pt-[8vh]'>
+      메인인데... 메인입니다..
+    </div>
   );
 };
 

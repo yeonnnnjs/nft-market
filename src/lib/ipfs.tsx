@@ -20,7 +20,7 @@ export const uploadToNFTStorage = async (file: File, name: string, description: 
 };
 
 export const getToNFTStorage = async (tokenId: number, uri: string): Promise<NFT | undefined> => {
-  const metadataUri = uri.replace('ipfs://', 'https://ipfs.io/ipfs/');
+  const metadataUri = uri.replace('ipfs://', 'https://').replace("/metadata.json", ".ipfs.nftstorage.link/metadata.json");
   try {
     const response = await fetch(metadataUri);
     const data = await response.json();
