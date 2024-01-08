@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import WalletConnectButton from './WalletConnectButton';
-import Link from 'next/link';
 import 'tailwindcss/tailwind.css';
 
 const NavBar = () => {
@@ -13,7 +12,7 @@ const NavBar = () => {
     return (
         <nav className="bg-blue-500 p-4 fixed w-full h-[8vh]">
             <div className="container mx-auto flex justify-between">
-                <h1 className="text-white text-2xl font-bold cursor-pointer" onClick={() => handleNavigate("/")}>
+                <h1 className="text-white text-2xl font-bold flex items-center" onClick={() => handleNavigate("/")}>
                     NFT Marketplace
                 </h1>
                 <div className="space-x-4 flex items-center">

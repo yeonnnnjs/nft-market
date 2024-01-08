@@ -69,6 +69,7 @@ export const getAllNFTs = async () => {
       for (let i = 0; i < parseFloat(totalSupply); i++) {
         const tokenId = await contract.tokenByIndex(i);
         const uri = await contract.tokenURI(tokenId);
+        console.log(chain.currency, tokenId, uri);
         if(uri) {
           promiseNFTs.push(getToNFTStorage(tokenId, uri));
         }

@@ -7,7 +7,6 @@ interface NFT {
     image: string;
     name: string;
     description: string;
-    currency: string;
 }
 
 interface NFTListProps {
@@ -17,7 +16,6 @@ interface NFTListProps {
 const NFTList: React.FC<NFTListProps> = ({ list }) => {
     const [filteredNFTList, setFilteredNFTList] = useState<NFT[]>(list);
     const [searchTerm, setSearchTerm] = useState('');
-    const { chainInfo } = useAccount();
 
     useEffect(() => {
         const filteredNFTs = list.filter((nft) =>
@@ -25,11 +23,10 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
         );
         setFilteredNFTList(filteredNFTs);
     }, [searchTerm, list]);
-
+    console.log(list);
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-20">
             <div className="col-span-full flex items-center justify-center mt-4 gap-4">
-                <h2 className="text-lg font-semibold">{chainInfo?.name}({chainInfo?.currency})</h2>
                 <input
                     type="text"
                     placeholder="NFT 검색"

@@ -1,11 +1,11 @@
 export const getContractAddress = (currency: string | undefined): string => {
     switch (currency) {
       case 'ETH':
-        return process.env.NEXT_PUBLIC_ETH_CONTRACT_ADDRESS || "0x7c357b7663b6a741b62eb702d55acbeb9a922a2c";
+        return process.env.NEXT_PUBLIC_ETH_CONTRACT_ADDRESS || "0x4d9be310abba0db366994c6e6744267c54dc1688";
       case 'BFC':
-        return process.env.NEXT_PUBLIC_BFC_CONTRACT_ADDRESS || "0xf280035fe74c2888e10277d21e39aaecf18655c5";
+        return process.env.NEXT_PUBLIC_BFC_CONTRACT_ADDRESS || "0xd519436746a8757b7e9e842714e1857286d7928d";
       default:
-        return process.env.NEXT_PUBLIC_BFC_CONTRACT_ADDRESS || "0xf280035fe74c2888e10277d21e39aaecf18655c5";
+        return process.env.NEXT_PUBLIC_BFC_CONTRACT_ADDRESS || "0xd519436746a8757b7e9e842714e1857286d7928d";
     }
   };
   

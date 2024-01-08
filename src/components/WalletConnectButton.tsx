@@ -3,7 +3,7 @@ import { useAccount } from '../context/AccountContext';
 import 'tailwindcss/tailwind.css';
 
 const WalletConnectButton = () => {
-  const { account, connectWallet, disconnectWallet } = useAccount();
+  const { account, chainInfo, balance, connectWallet, disconnectWallet } = useAccount();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const handleLogoutClick = () => {
@@ -22,8 +22,11 @@ const WalletConnectButton = () => {
   return (
     <div>
       {account ? (
-        <div>
-          <span className="mr-2 text-white">{account.substring(0, 6) + '.....' + account.substring(account.length - 6)}</span>
+        <div className='flex'>
+          <div>
+            <p className="mr-2 text-white">{balance?.substring(0, 6)}{chainInfo?.currency}</p>
+            <p className="mr-2 text-white">{account.substring(0, 6) + '.....' + account.substring(account.length - 6)}</p>
+          </div>
           <button
             className="bg-white text-blue-500 px-2 py-1 rounded cursor-pointer hover:text-gray-300"
             onClick={handleLogoutClick}

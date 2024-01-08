@@ -11,6 +11,7 @@ const MintNFTForm = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [description, setDescription] = useState<string>('');
   const { account, provider, chainInfo } = useAccount();
+  const [msg, setMsg] = useState<string>();
 
   useEffect(() => {
     checkAuth(account);
@@ -38,51 +39,47 @@ const MintNFTForm = () => {
   };
 
   const handleMint = async () => {
-    let metadata;
     const formData = new FormData();
-    // formData.append('image', image);
+    formData.append('image', image);
     formData.append('name', name);
     formData.append('description', description);
 
     if (image && provider) {
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_ADDRESS + "/api/ipfs/upload", {
-          method: "POST",
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          body: formData
-        });
-        if (!response.ok) {
-          throw new Error();
+        if (!chainInfo?.currency) {
+          setMsg("지원하지 않는 네트워크입니다!");
+        }        
+        else {
+          setMsg('민팅 진행 중...');
+          const response = await fetch(process.env.NEXT_PUBLIC_ADDRESS + "/api/ipfs/upload", {
+            method: "POST",
+            body: formData
+          });
+          const metadata = await response.json();
+          const contractAddress = getContractAddress(chainInfo?.currency);
+          const contractAbi = [
+            {
+              "constant": false,
+              "inputs": [
+                {
+                  "name": "uri",
+                  "type": "string"
+                }
+              ],
+              "name": "safeMint",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ];
+
+          const signer = await provider.getSigner();
+          const nftContract = new ethers.Contract(contractAddress, contractAbi, signer);
+          const mintTransaction = await nftContract.safeMint(metadata.url, { gasLimit: 500000 });
+          await mintTransaction.wait();
+          setMsg('민팅 완료!');
         }
-        console.log(response.body);
-        metadata = response.json();
-
-        const contractAddress = getContractAddress(chainInfo?.currency);
-        const contractAbi = [
-          {
-            "constant": false,
-            "inputs": [
-              {
-                "name": "uri",
-                "type": "string"
-              }
-            ],
-            "name": "safeMint",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-          }
-        ];
-
-        const signer = await provider.getSigner();
-        const nftContract = new ethers.Contract(contractAddress, contractAbi, signer);
-        const mintTransaction = await nftContract.safeMint(metadata, { gasLimit: 500000 });
-        await mintTransaction.wait();
-
-        console.log('NFT successfully minted!');
       } catch (error) {
         console.error('Error minting NFT:', error);
       }
@@ -114,6 +111,7 @@ const MintNFTForm = () => {
           </div>
         </div>
       </div>
+      {msg}
       <button onClick={handleMint} className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 w-[40vw] flex justify-center mx-auto">Mint NFT</button>
     </div>
   );

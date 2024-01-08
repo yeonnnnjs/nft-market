@@ -1,10 +1,10 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { ethers } from "ethers";
-import { useErrorContext } from './ErrorContext';
 import { Chain, getChainInfo } from '@/public/data/ChainList';
 
 interface AccountContextProps {
   account: string | null;
+  balance: string | null;
   provider: ethers.BrowserProvider | null;
   chainInfo: Chain | null;
   setAccount: (account: string | null) => void;
@@ -18,22 +18,18 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [account, setAccount] = useState<string | null>(null);
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
   const [chainInfo, setChainInfo] = useState<Chain | null>(null);
-  // const { setErrorMsg } = useErrorContext();
-  // const handleChainChange = async () => {
-  //   try {
-  //     const provider = new ethers.BrowserProvider(window.ethereum);
-  //     const network = await provider?.getNetwork();
-  //     const newChain = getChainInfo(parseFloat(network?.chainId));
-  //     if (!newChain) {
-  //       setErrorMsg("지원하지 않는 네트워크입니다!");
-  //     } else {
-  //       setErrorMsg(null);
-  //     }
-  //     setChainInfo(newChain);
-  //   } catch (error) {
-  //     console.error('Error handling chain change:', error.message);
-  //   }
-  // };
+  const [balance, setBalance] = useState<string | null>(null);
+
+  const handleChainChange = async () => {
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const network = await provider?.getNetwork();
+      const newChain = getChainInfo(parseFloat(network?.chainId));
+      setChainInfo(newChain);
+    } catch (error) {
+      console.error('Error handling chain change:', error.message);
+    }
+  };
 
   const connectWallet = async () => {
     try {
@@ -43,14 +39,12 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         const selectedAccount = sessionStorage.getItem('userAccount') || await provider.send('eth_requestAccounts', []).then(accounts => {
           return accounts[0];
         });
+        const balance = await provider.getBalance(selectedAccount);
         const network = await provider.getNetwork();
         const chain = getChainInfo(parseFloat(network.chainId));
-        // if (!chain) {
-        //   setErrorMsg("지원하지 않는 네트워크입니다!");
-        // }
-        // else {
-        //   setErrorMsg(null);
-        // }
+
+        setBalance(ethers.formatEther(balance));
+        console.log(balance);
         setChainInfo(chain);
         setProvider(provider);
         setAccount(selectedAccount);
@@ -91,12 +85,12 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
       });
 
-      // ethereum.on('chainChanged', handleChainChange);
+      ethereum.on('chainChanged', handleChainChange);
     }
   }, []);
 
   return (
-    <AccountContext.Provider value={{ account, provider, chainInfo, setAccount, connectWallet, disconnectWallet }}>
+    <AccountContext.Provider value={{ account, provider, balance, chainInfo, setAccount, connectWallet, disconnectWallet }}>
       {children}
     </AccountContext.Provider>
   );
