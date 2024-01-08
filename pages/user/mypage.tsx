@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAccount } from '../../src/context/AccountContext';
 import { ethers } from 'ethers';
 import { getContractAddress } from '../../src/utils/contractPicker';
-import { getToNFTStorage } from '../ipfs';
+import { getToNFTStorage } from '@/src/utils/ipfs';
 import NFTList from '../../src/components/NFTList';
 import checkAuth from '@/src/utils/auth';
 import 'tailwindcss/tailwind.css';
@@ -12,6 +12,7 @@ interface NFT {
     image: string;
     name: string;
     description: string;
+    nftId: string;
 }
 
 const MyPage = () => {
@@ -108,7 +109,7 @@ const MyPage = () => {
                 const tokenId = await contract.tokenOfOwnerByIndex(account, i);
                 const uri = await contract.tokenURI(tokenId);
                 getToNFTStorage(tokenId, uri).then((nft) => {
-                    ownedNFTs.push(nft);
+                    ownedNFTs.push(nft as NFT);
                     setNFTList(ownedNFTs);
                 });
             }
@@ -149,7 +150,6 @@ const MyPage = () => {
             </div>
             <NFTList
                 list={nftList}
-                isMyNFTs={true}
             />
         </div>
     );

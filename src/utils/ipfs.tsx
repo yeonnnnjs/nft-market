@@ -1,8 +1,8 @@
 interface NFT {
-  id: number;
-  image: string;
-  name: string;
-  description: string;
+  id: number | null;
+  image: string | null;
+  name: string | null;
+  description: string | null;
 }
 
 export const getToNFTStorage = async (tokenId: number, uri: string): Promise<NFT | undefined> => {
@@ -12,7 +12,7 @@ export const getToNFTStorage = async (tokenId: number, uri: string): Promise<NFT
     const data = await response.json();
 
     const nft: NFT = {
-      id : parseFloat(tokenId),
+      id : tokenId,
       image : convertIpfsUrlToNftStorage(data.image),
       name : data.name,
       description : data.description
@@ -23,7 +23,7 @@ export const getToNFTStorage = async (tokenId: number, uri: string): Promise<NFT
   }
 };
 
-function convertIpfsUrlToNftStorage(ipfsUrl) {
+function convertIpfsUrlToNftStorage(ipfsUrl: string) {
   const ipfsHashRegex = /ipfs:\/\/([a-zA-Z0-9]*)/;
   const ipfsMatch = ipfsUrl.match(ipfsHashRegex);
 

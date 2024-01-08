@@ -75,10 +75,15 @@ export const getAllNFTs = async () => {
         }
       }
       const allPromises = await Promise.all(promiseNFTs);
-      const allNFTs = allPromises.map((nft) => ({
+      const allNFTs = allPromises.map((nft) => {
+        if(nft) {
+          nft.id = Number(nft.id); 
+        }
+        return {
           ...nft,
           nftId: chain.currency+nft?.id
-      }))
+        }
+      });
       return allNFTs;
     } catch (error) {
       console.error('Error:', error);
@@ -91,7 +96,7 @@ export const getAllNFTs = async () => {
 
 export const getMetadataByNftId = async (nftId: string) => {
     const chainCurrency = nftId.slice(0, 3);
-    const id = nftId.slice(3,);
+    const id = Number(nftId.slice(3,));
     
     const chainInfo = getChainInfoByCurrency(chainCurrency);
   
@@ -125,6 +130,6 @@ export const getMetadataByNftId = async (nftId: string) => {
 
 export const getAllNftIdToPaths = async () => {
   const nftList = await getAllNFTs();
-  const nftIds = nftList.map((nft) => "/nft/" + nft.nftId);
+  const nftIds = nftList.map((nft) => "/nft/" + nft?.nftId);
   return nftIds;
 };

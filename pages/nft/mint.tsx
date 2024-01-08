@@ -40,7 +40,7 @@ const MintNFTForm = () => {
 
   const handleMint = async () => {
     const formData = new FormData();
-    formData.append('image', image);
+    formData.append('image', image as File);
     formData.append('name', name);
     formData.append('description', description);
 

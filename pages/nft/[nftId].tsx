@@ -1,5 +1,6 @@
 import { getAllNftIdToPaths, getMetadataByNftId } from '@/src/utils/contractApi';
 import TransferNFTForm from '../../src/components/TransferNFTForm';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
 interface NFT {
     id: number;
@@ -8,7 +9,7 @@ interface NFT {
     description: string;
 }
 
-const DetailNFT = ({nft}) => {
+const DetailNFT = (nft: NFT) => {
     return (
         <div className='pt-[8vh]'>
             <div className="bg-white p-4 rounded-md shadow-md w-50 h-50">
@@ -23,16 +24,19 @@ const DetailNFT = ({nft}) => {
     );
 };
 
-export const getStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
     const paths = await getAllNftIdToPaths();
     return { paths, fallback: false };
 }
 
-export const getStaticProps = async ({ params }) => {
-    const metadata = await getMetadataByNftId(params.nftId);
+export const getStaticProps: GetStaticProps  = async ({ params }) => {0
+    const metadata = await getMetadataByNftId(params?.nftId as string);
     return {
         props: {
-            nft: metadata
+            id: metadata?.id,
+            image: metadata?.image,
+            name: metadata?.name,
+            description: metadata?.description
         }
     }
 }

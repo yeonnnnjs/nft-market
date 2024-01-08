@@ -9,23 +9,35 @@ export const config = {
     }
 }
 
+interface ipfsStore {
+    image: File;
+    name: string;
+    description: string;
+}
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    const reqData = await new Promise((resolve, reject) => {
+    const reqData : ipfsStore = await new Promise((resolve, reject) => {
         const form = new IncomingForm({
             keepExtensions: true
         })
 
         form.parse(req, (err, fields, files) => {
-            if (err) return reject(err)
-            const fileName = files.image[0].newFilename;
-            const fileContent = fs.readFileSync(files.image[0].filepath);
-            const blob = new Blob([fileContent], { type: 'image/*' });
-            const file = new File([blob], fileName, { type: 'image/*' });
-            return resolve({
-                name: fields.name[0],
-                description: fields.description[0],
-                image: file
-            });
+            if(err) return reject(err)
+
+            if (files && files.image && files.image[0] && fields && fields.name && fields.description) {
+                const fileName = files.image[0].newFilename;
+                const fileContent = fs.readFileSync(files.image[0].filepath);
+                const blob = new Blob([fileContent], { type: 'image/*' });
+                const file = new File([blob], fileName, { type: 'image/*' });
+        
+                resolve({
+                  name: fields.name[0],
+                  description: fields.description[0],
+                  image: file,
+                });
+              } else {
+                reject(new Error('Image file is missing.'));
+              }
         })
     });
 

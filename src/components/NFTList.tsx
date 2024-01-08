@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useAccount } from '../context/AccountContext';
 import Link from 'next/link';
 
 interface NFT {
@@ -7,6 +6,7 @@ interface NFT {
     image: string;
     name: string;
     description: string;
+    nftId: string
 }
 
 interface NFTListProps {

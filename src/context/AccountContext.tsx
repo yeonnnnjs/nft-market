@@ -1,13 +1,12 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { ethers } from "ethers";
-import { Chain, getChainInfo } from '@/public/data/ChainList';
+import { Chain, getChainInfo } from '@/public/data/ChainList'
 
 interface AccountContextProps {
   account: string | null;
   balance: string | null;
   provider: ethers.BrowserProvider | null;
   chainInfo: Chain | null;
-  setAccount: (account: string | null) => void;
   connectWallet: () => void;
   disconnectWallet: () => void;
 }
@@ -22,26 +21,27 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const handleChainChange = async () => {
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const ethereum = (window as any).ethereum;
+      const provider = new ethers.BrowserProvider(ethereum);
       const network = await provider?.getNetwork();
-      const newChain = getChainInfo(parseFloat(network?.chainId));
+      const newChain = getChainInfo(Number(network?.chainId));
       setChainInfo(newChain);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error handling chain change:', error.message);
     }
   };
 
   const connectWallet = async () => {
     try {
-      const ethereum = window.ethereum;
+      const ethereum = (window as any).ethereum;
       if (ethereum) {
         const provider = new ethers.BrowserProvider(ethereum);
-        const selectedAccount = sessionStorage.getItem('userAccount') || await provider.send('eth_requestAccounts', []).then(accounts => {
+        const selectedAccount: string = sessionStorage.getItem('userAccount') || await provider.send('eth_requestAccounts', []).then(accounts => {
           return accounts[0];
         });
         const balance = await provider.getBalance(selectedAccount);
         const network = await provider.getNetwork();
-        const chain = getChainInfo(parseFloat(network.chainId));
+        const chain = getChainInfo(Number(network?.chainId));
 
         setBalance(ethers.formatEther(balance));
         console.log(balance);
@@ -49,13 +49,14 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         setProvider(provider);
         setAccount(selectedAccount);
 
-        sessionStorage.setItem('userAccount', [selectedAccount]);
-      } else {
-        console.log("MetaMask not installed; using read-only defaults");
-        const provider = ethers.getDefaultProvider();
-        setProvider(provider);
+        sessionStorage.setItem('userAccount', selectedAccount);
       }
-    } catch (error) {
+      //  else {
+      //   console.log("MetaMask not installed; using read-only defaults");
+      //   const provider = ethers.getDefaultProvider();
+      //   setProvider(provider);
+      // }
+    } catch (error: any) {
       console.error('Error connecting wallet:', error.message);
     }
   };
@@ -69,14 +70,14 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   useEffect(() => {
+    const ethereum = (window as any).ethereum;
     const session = sessionStorage.getItem('userAccount');
-    const ethereum = window.ethereum;
     if (session) {
       connectWallet();
     }
 
     if (ethereum) {
-      ethereum.on('accountsChanged', ([newAccount]) => {
+      ethereum.on('accountsChanged', ([newAccount]: string[]) => {
         if (newAccount) {
           setAccount(newAccount);
           sessionStorage.setItem('userAccount', newAccount);
@@ -90,7 +91,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   return (
-    <AccountContext.Provider value={{ account, provider, balance, chainInfo, setAccount, connectWallet, disconnectWallet }}>
+    <AccountContext.Provider value={{ account, provider, balance, chainInfo, connectWallet, disconnectWallet }}>
       {children}
     </AccountContext.Provider>
   );
