@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useAccount } from '../../src/context/AccountContext';
 import { getContractAddress } from '../../src/utils/contractPicker';
-import { uploadToNFTStorage } from '../ipfs';
 import checkAuth from '@/src/utils/auth';
 import 'tailwindcss/tailwind.css';
 
@@ -40,11 +39,25 @@ const MintNFTForm = () => {
 
   const handleMint = async () => {
     let metadata;
+    const formData = new FormData();
+    // formData.append('image', image);
+    formData.append('name', name);
+    formData.append('description', description);
+
     if (image && provider) {
       try {
-        if (image) {
-          metadata = await uploadToNFTStorage(image, name, description);
+        const response = await fetch(process.env.NEXT_PUBLIC_ADDRESS + "/api/ipfs/upload", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formData
+        });
+        if (!response.ok) {
+          throw new Error();
         }
+        console.log(response.body);
+        metadata = response.json();
 
         const contractAddress = getContractAddress(chainInfo?.currency);
         const contractAbi = [
@@ -101,7 +114,7 @@ const MintNFTForm = () => {
           </div>
         </div>
       </div>
-        <button onClick={handleMint} className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 w-[40vw] flex justify-center mx-auto">Mint NFT</button>
+      <button onClick={handleMint} className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 w-[40vw] flex justify-center mx-auto">Mint NFT</button>
     </div>
   );
 };

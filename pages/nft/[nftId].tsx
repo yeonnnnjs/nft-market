@@ -9,7 +9,6 @@ interface NFT {
 }
 
 const DetailNFT = ({nft}) => {
-    console.log(nft);
     return (
         <div className='pt-[8vh]'>
             <div className="bg-white p-4 rounded-md shadow-md w-50 h-50">

@@ -21,7 +21,7 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
 
     useEffect(() => {
         const filteredNFTs = list.filter((nft) =>
-            nft.name.toLowerCase().includes(searchTerm.toLowerCase())
+            nft.name ? nft.name.toLowerCase().includes(searchTerm.toLowerCase()) : ""
         );
         setFilteredNFTList(filteredNFTs);
     }, [searchTerm, list]);

@@ -1,6 +1,6 @@
 import { getChainInfoByCurrency } from '@/public/data/ChainList';
-import { getToNFTStorage } from '@/pages/api/ipfs';
-import { getContractAddress } from '@/src/utils/contractPicker';
+import { getContractAddress } from './contractPicker';
+import { getToNFTStorage } from './ipfs';
 import { chainList } from '@/public/data/ChainList';
 import { ethers } from 'ethers';
 
@@ -64,22 +64,20 @@ export const getAllNFTs = async () => {
       ];
       const provider = new ethers.JsonRpcProvider(chain?.rpcUrl);
       const contract = new ethers.Contract(contractAddress, contractAbi, provider);
-
       const totalSupply = await contract.totalSupply();
       const promiseNFTs = [];
       for (let i = 0; i < parseFloat(totalSupply); i++) {
         const tokenId = await contract.tokenByIndex(i);
         const uri = await contract.tokenURI(tokenId);
-        promiseNFTs.push(getToNFTStorage(tokenId, uri));
+        if(uri) {
+          promiseNFTs.push(getToNFTStorage(tokenId, uri));
+        }
       }
       const allPromises = await Promise.all(promiseNFTs);
-      const allNFTs = allPromises.map((nft) => {
-        nft.id = parseFloat(nft.id);
-        return {
+      const allNFTs = allPromises.map((nft) => ({
           ...nft,
-          nftId: chain.currency+nft.id
-        }
-      })
+          nftId: chain.currency+nft?.id
+      }))
       return allNFTs;
     } catch (error) {
       console.error('Error:', error);
