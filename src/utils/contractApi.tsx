@@ -122,10 +122,13 @@ export const getMetadataByNftId = async (nftId: string) => {
       "type": "function"
     }];
     const contract = new ethers.Contract(contractAddress, contractAbi, provider);
-    const uri = await contract.tokenURI(id);
-  
-    const metadata = await getToNFTStorage(id, uri);
-    return metadata;
+    try {
+      const uri = await contract.tokenURI(id);
+      const metadata = await getToNFTStorage(id, uri);
+      return metadata;
+    } catch (e: any) {
+      return null;
+    }
 };
 
 export const getAllNftIdToPaths = async () => {

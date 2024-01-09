@@ -27,7 +27,8 @@ export const getStaticProps = async () => {
   return {
     props: {
       nftList
-    }
+    },
+    revalidate: 10
   }
 }
 

@@ -44,7 +44,6 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         const chain = getChainInfo(Number(network?.chainId));
 
         setBalance(ethers.formatEther(balance));
-        console.log(balance);
         setChainInfo(chain);
         setProvider(provider);
         setAccount(selectedAccount);

@@ -26,17 +26,23 @@ const DetailNFT = (nft: NFT) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const paths = await getAllNftIdToPaths();
-    return { paths, fallback: false };
+    return { paths, fallback: true };
 }
 
 export const getStaticProps: GetStaticProps  = async ({ params }) => {0
     const metadata = await getMetadataByNftId(params?.nftId as string);
-    return {
-        props: {
-            id: metadata?.id,
-            image: metadata?.image,
-            name: metadata?.name,
-            description: metadata?.description
+    if (!metadata) {
+        return {
+            notFound: true,
+        };
+    } else {
+        return {
+            props: {
+                id: metadata?.id,
+                image: metadata?.image,
+                name: metadata?.name,
+                description: metadata?.description
+            }
         }
     }
 }

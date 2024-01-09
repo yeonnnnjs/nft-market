@@ -51,8 +51,8 @@ const MintNFTForm = () => {
         }        
         else {
           setMsg('민팅 진행 중...');
-          const response = await fetch(process.env.NEXT_PUBLIC_ADDRESS + "/api/ipfs/upload", {
-            method: "POST",
+          const response = await fetch("/api/ipfs/upload", {
+            method: 'POST',
             body: formData
           });
           const metadata = await response.json();
@@ -77,8 +77,9 @@ const MintNFTForm = () => {
           const signer = await provider.getSigner();
           const nftContract = new ethers.Contract(contractAddress, contractAbi, signer);
           const mintTransaction = await nftContract.safeMint(metadata.url, { gasLimit: 500000 });
-          await mintTransaction.wait();
-          setMsg('민팅 완료!');
+          await mintTransaction.wait().then(
+            setMsg('민팅 완료!')
+          );
         }
       } catch (error) {
         console.error('Error minting NFT:', error);
