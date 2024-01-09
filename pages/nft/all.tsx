@@ -1,6 +1,6 @@
 import NFTList from '../../src/components/NFTList';
 import 'tailwindcss/tailwind.css';
-import { getAllNFTs } from '@/src/utils/contractApi';
+import { GetAllNFTs } from '@/src/utils/contractApi';
 
 interface NFT {
   id: number;
@@ -23,7 +23,7 @@ const AllNFTs = ({nftList}: AllNFTsProps) => {
 };
 
 export const getStaticProps = async () => {
-  const nftList = await getAllNFTs();
+  const nftList = await GetAllNFTs();
   return {
     props: {
       nftList

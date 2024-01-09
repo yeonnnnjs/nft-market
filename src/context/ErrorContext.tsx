@@ -14,7 +14,7 @@ export const ErrorProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   useEffect(() => {
     if (errorMsg && router.pathname != '/error') {
-      window.location.href = '/error';
+      router.push('/error');
       setErrorMsg(null);
     }
   }, [errorMsg]);

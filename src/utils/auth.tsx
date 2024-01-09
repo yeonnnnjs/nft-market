@@ -1,6 +1,11 @@
-const checkAuth = (account: string | null) => {
+import { useRouter } from "next/router";
+
+export const CheckAuth = () => {
+    const router = useRouter();
+    const account = localStorage.getItem('account');
     if (!account) {
-        window.location.href = '/user/login';
+        router.push('/user/login');
     }
+    return null;
 };
-export default checkAuth;
+export default CheckAuth;

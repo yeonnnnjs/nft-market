@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from "next/image";
 
 interface NFT {
     id: number;
@@ -45,9 +46,13 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
                 filteredNFTList.map((nft, index) => (
                     <div key={index} className="bg-white p-4 rounded-md shadow-md flex flex-col items-center justify-between">
                         <Link href={`/nft/${encodeURIComponent(nft.nftId)}`}>
-                            <img
+                            <Image
                                 src={nft.image}
                                 alt={nft.name}
+                                width={0}
+                                height={0}
+                                sizes="100vw"
+                                style={{ width: '100%', height: 'auto' }}
                                 className="mb-2 rounded-md"
                                 loading="lazy"
                             />

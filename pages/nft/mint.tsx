@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import { useAccount } from '../../src/context/AccountContext';
-import { getContractAddress } from '../../src/utils/contractPicker';
-import checkAuth from '@/src/utils/auth';
+import { useAccount } from '@/src/context/AccountContext';
+import { getContractAddress } from '@/src/utils/contractPicker';
 import 'tailwindcss/tailwind.css';
+import { useRouter } from "next/router";
 
 const MintNFTForm = () => {
   const [image, setImage] = useState<File | null>(null);
   const [name, setName] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [description, setDescription] = useState<string>('');
-  const { account, provider, chainInfo } = useAccount();
+  const { provider, chainInfo } = useAccount();
   const [msg, setMsg] = useState<string>();
+  const router = useRouter();
 
   useEffect(() => {
-    checkAuth(account);
+    const account = localStorage.getItem('account');
+    if (!account) {
+      router.push('/user/login');
+    }
   }, [])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

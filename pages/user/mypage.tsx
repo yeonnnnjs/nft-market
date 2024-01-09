@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useAccount } from '../../src/context/AccountContext';
-import { ethers } from 'ethers';
-import { getContractAddress } from '../../src/utils/contractPicker';
-import { getToNFTStorage } from '@/src/utils/ipfs';
+import { useAccount } from '@/src/context/AccountContext';
 import NFTList from '../../src/components/NFTList';
 import checkAuth from '@/src/utils/auth';
 import 'tailwindcss/tailwind.css';
+import { GetOwnedNFTs } from "@/src/utils/contractApi";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 interface NFT {
     id: number;
@@ -15,116 +14,20 @@ interface NFT {
     nftId: string;
 }
 
-const MyPage = () => {
-    const [balance, setBalance] = useState<number | null>(null);
-    const { account, provider, chainInfo, connectWallet } = useAccount();
-    const [nftList, setNFTList] = useState<NFT[]>([]);
+interface myPageProps {
+    nftList: NFT[];
+}
+
+const MyPage = ({nftList}: myPageProps) => {
+    const router = useRouter();
+    const { account, balance, chainInfo, connectWallet } = useAccount();
 
     useEffect(() => {
-        checkAuth(account);
-        if (account) {
-            fetchBalance();
-            getOwnedNFTs();
-        } 
+        const account = localStorage.getItem('account');
+        if (!account) {
+            router.push('/user/login');
+        }
     }, []);
-
-    useEffect(() => {
-        checkAuth(account);
-        if (account) {
-            fetchBalance();
-            getOwnedNFTs();
-        }
-    }, [account, provider]);
-
-    const getOwnedNFTs = async () => {
-        const contractAddress = getContractAddress(chainInfo?.currency);
-        const contractAbi = [{
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "_owner",
-                    "type": "address"
-                }
-            ],
-            "name": "balanceOf",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "_owner",
-                    "type": "address"
-                },
-                {
-                    "name": "_index",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenOfOwnerByIndex",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "_tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenURI",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }
-        ];
-
-        const contract = new ethers.Contract(contractAddress, contractAbi, provider);
-        try {
-            const balance = await contract.balanceOf(account);
-            const ownedNFTs: NFT[] = [];
-            for (let i = 0; i < parseFloat(balance); i++) {
-                const tokenId = await contract.tokenOfOwnerByIndex(account, i);
-                const uri = await contract.tokenURI(tokenId);
-                getToNFTStorage(tokenId, uri).then((nft) => {
-                    ownedNFTs.push(nft as NFT);
-                    setNFTList(ownedNFTs);
-                });
-            }
-            console.log("Owned NFTs:", ownedNFTs);
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    }
-
-    const fetchBalance = async () => {
-        if (account && provider) {
-            const balance = await provider.getBalance(account);
-            setBalance(parseFloat(ethers.formatUnits(balance)));
-        }
-    };
 
     return (
         <div className='pt-[8vh]'>
@@ -154,5 +57,18 @@ const MyPage = () => {
         </div>
     );
 };
+
+export const getServerSideProps = async (context: any) => {
+    const account = context.req.headers.cookie.replace("account=","");
+    let nftList: any[] = [];
+    if (account) {
+        nftList = await GetOwnedNFTs(account);
+    }
+    return {
+        props: {
+            nftList
+        },
+    }
+}
 
 export default MyPage;

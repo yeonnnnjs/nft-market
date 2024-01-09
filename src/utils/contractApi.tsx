@@ -4,7 +4,15 @@ import { getToNFTStorage } from './ipfs';
 import { chainList } from '@/public/data/ChainList';
 import { ethers } from 'ethers';
 
-export const getAllNFTs = async () => {
+interface NFT {
+  id: number;
+  image: string;
+  name: string;
+  description: string;
+  nftId: string;
+}
+
+export const GetAllNFTs = async () => {
   const promises = chainList.map(async (chain) => {
     try {
       const contractAddress = getContractAddress(chain?.currency);
@@ -94,7 +102,7 @@ export const getAllNFTs = async () => {
   return flattenedNFTs;
 };
 
-export const getMetadataByNftId = async (nftId: string) => {
+export const GetMetadataByNftId = async (nftId: string) => {
     const chainCurrency = nftId.slice(0, 3);
     const id = Number(nftId.slice(3,));
     
@@ -131,8 +139,108 @@ export const getMetadataByNftId = async (nftId: string) => {
     }
 };
 
-export const getAllNftIdToPaths = async () => {
-  const nftList = await getAllNFTs();
+export const GetAllNftIdToPaths = async () => {
+  const nftList = await GetAllNFTs();
   const nftIds = nftList.map((nft) => "/nft/" + nft?.nftId);
   return nftIds;
 };
+
+export const GetOwnedNFTs = async (account: string | null) => {
+  const promises = chainList.map(async (chain) => {
+    try {
+      const contractAddress = getContractAddress(chain?.currency);
+      const contractAbi = [
+          {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_owner",
+            "type": "address"
+          }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+        {
+          "constant": true,
+          "inputs": [
+            {
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "tokenOfOwnerByIndex",
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [
+            {
+              "name": "_tokenId",
+              "type": "uint256"
+            }
+          ],
+          "name": "tokenURI",
+          "outputs": [
+            {
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ];
+      const provider = new ethers.JsonRpcProvider(chain?.rpcUrl);
+      const contract = new ethers.Contract(contractAddress, contractAbi, provider);
+      const balance = await contract.balanceOf(account);
+      const ownedNFTs = [];
+      for (let i = 0; i < parseFloat(balance); i++) {
+        const tokenId = await contract.tokenOfOwnerByIndex(account, i);
+        const uri = await contract.tokenURI(tokenId);
+        console.log(chain.currency, tokenId, uri);
+        if(uri) {
+          ownedNFTs.push(getToNFTStorage(tokenId, uri));
+        }
+      }
+      const allPromises = await Promise.all(ownedNFTs);
+      const allNFTs = allPromises.map((nft) => {
+        if(nft) {
+          nft.id = Number(nft.id);
+        }
+        return {
+          ...nft,
+          nftId: chain.currency+nft?.id
+        }
+      });
+      return allNFTs;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  });
+  const results = await Promise.all(promises);
+  const flattenedNFTs = results.flat();
+  return flattenedNFTs;
+}

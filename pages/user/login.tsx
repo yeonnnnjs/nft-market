@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useAccount } from "@/src/context/AccountContext";
+import { useRouter } from "next/router";
 
 const RequestLogin = () => {
     const { connectWallet, account } = useAccount();
+    const router = useRouter();
 
     useEffect(() => {
         if (account) {
-            window.location.href = '/nft/all';
+            router.back();
         }
     })
 

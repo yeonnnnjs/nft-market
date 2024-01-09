@@ -3,6 +3,7 @@ import { ErrorProvider } from '@/src/context/ErrorContext';
 import type { AppProps } from "next/app";
 import Head from 'next/head';
 import Layout from '@/src/components/Layout';
+import {NextPageContext} from "next";
 
 const NftMarket = ({ Component, pageProps }: AppProps) => {
 

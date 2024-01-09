@@ -1,4 +1,4 @@
-import { getAllNftIdToPaths, getMetadataByNftId } from '@/src/utils/contractApi';
+import { GetAllNftIdToPaths, GetMetadataByNftId } from '@/src/utils/contractApi';
 import TransferNFTForm from '../../src/components/TransferNFTForm';
 import { GetStaticPaths, GetStaticProps } from 'next';
 
@@ -25,12 +25,12 @@ const DetailNFT = (nft: NFT) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await getAllNftIdToPaths();
+    const paths = await GetAllNftIdToPaths();
     return { paths, fallback: true };
 }
 
 export const getStaticProps: GetStaticProps  = async ({ params }) => {0
-    const metadata = await getMetadataByNftId(params?.nftId as string);
+    const metadata = await GetMetadataByNftId(params?.nftId as string);
     if (!metadata) {
         return {
             notFound: true,

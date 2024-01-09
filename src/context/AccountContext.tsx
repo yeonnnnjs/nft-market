@@ -1,6 +1,7 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { ethers } from "ethers";
 import { Chain, getChainInfo } from '@/public/data/ChainList'
+import { useRouter } from "next/router";
 
 interface AccountContextProps {
   account: string | null;
@@ -18,6 +19,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
   const [chainInfo, setChainInfo] = useState<Chain | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleChainChange = async () => {
     try {
@@ -35,10 +37,9 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
     try {
       const ethereum = (window as any).ethereum;
       if (ethereum) {
-        const provider = new ethers.BrowserProvider(ethereum);
-        const selectedAccount: string = sessionStorage.getItem('userAccount') || await provider.send('eth_requestAccounts', []).then(accounts => {
-          return accounts[0];
-        });
+        const provider = await new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        const selectedAccount: string = !localStorage.getItem('account') ? signer.address : localStorage.getItem('account') as string;
         const balance = await provider.getBalance(selectedAccount);
         const network = await provider.getNetwork();
         const chain = getChainInfo(Number(network?.chainId));
@@ -48,7 +49,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         setProvider(provider);
         setAccount(selectedAccount);
 
-        sessionStorage.setItem('userAccount', selectedAccount);
+        localStorage.setItem('account', selectedAccount);
       }
       //  else {
       //   console.log("MetaMask not installed; using read-only defaults");
@@ -64,13 +65,13 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
     setProvider(null);
     setAccount(null);
     setChainInfo(null);
-    sessionStorage.removeItem('userAccount');
-    window.location.href = '/user/login';
+    localStorage.removeItem('account');
+    router.push('/user/login');
   };
 
   useEffect(() => {
     const ethereum = (window as any).ethereum;
-    const session = sessionStorage.getItem('userAccount');
+    const session = localStorage.getItem('account');
     if (session) {
       connectWallet();
     }
@@ -79,7 +80,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
       ethereum.on('accountsChanged', ([newAccount]: string[]) => {
         if (newAccount) {
           setAccount(newAccount);
-          sessionStorage.setItem('userAccount', newAccount);
+          localStorage.setItem('account', newAccount);
         } else {
           disconnectWallet();
         }
