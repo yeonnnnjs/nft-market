@@ -116,6 +116,8 @@ const MintNFTForm = () => {
               </div>
             </div>
           </div>
+          {msg}
+          <button onClick={handleMint} className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 w-[40vw] flex justify-center mx-auto">Mint NFT</button>
         </div>
       </div>
   );

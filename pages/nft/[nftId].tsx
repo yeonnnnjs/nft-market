@@ -15,7 +15,6 @@ interface NFT {
 
 const DetailNFT: React.FC<NFT> = (nft) => {
     const { account } = useAccount();
-    console.log(nft, account);
 
     return (
         <div className='pt-[8vh] flex items-center justify-center flex-col gap-4'>
@@ -30,7 +29,7 @@ const DetailNFT: React.FC<NFT> = (nft) => {
                     <p className="text-lg text-gray-500 mb-4">{nft?.owner}</p>
                 </div>
             </div>
-            {nft?.owner == account ? (
+            {nft?.owner.toLowerCase() == account ? (
                 <div className="flex w-full h-full">
                     <div className="bg-white p-8 rounded-md shadow-md w-full">
                         <TransferNFTForm nftId={nft?.id}/>

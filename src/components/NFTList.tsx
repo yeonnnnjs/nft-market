@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import Image from "next/image";
 
 interface NFT {
@@ -27,8 +26,8 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
     }, [searchTerm, list]);
     console.log(list);
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-20">
-            <div className="col-span-full flex items-center justify-center mt-4 gap-4">
+        <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-20">
+            <div className="col-span-full flex items-center justify-center mt-4 gap-4 -z-10">
                 <input
                     type="text"
                     placeholder="NFT 검색"
@@ -45,16 +44,14 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
                 </div>
             ) : (
                 filteredNFTList.map((nft) => (
-                    <div key={nft.nftId} className="bg-white p-4 rounded-md shadow-md">
-                        <Link href={`/nft/${encodeURIComponent(nft.nftId)}`}>
-                            <div className="relative h-32 mb-4 rounded-md overflow-hidden">
-                                <Image src={nft.image} alt={nft.name} fill={true} objectFit={"cover"}/>
+                    <div key={nft.nftId} className="bg-white p-4 rounded-md shadow-md cursor-pointer -z-10" onClick={() => window.location.href=`/nft/${nft.nftId}`}>
+                            <div className="relative h-32 mb-4 rounded-md overflow-hidden -z-20">
+                                <Image src={nft.image} alt={nft.name} fill={true} priority={true} className="object-cover" />
                             </div>
                             <div className="flex flex-col h-full items-center">
                                 <h2 className="text-lg font-semibold">{nft.name}</h2>
                                 <p className="text-gray-500">{nft.description}</p>
                             </div>
-                        </Link>
                     </div>
                 ))
             )}
