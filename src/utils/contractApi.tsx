@@ -68,14 +68,36 @@ export const GetAllNFTs = async () => {
           "payable": false,
           "stateMutability": "view",
           "type": "function"
-        }
+        },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "name": "tokenId",
+                "type": "uint256"
+              }
+            ],
+            "name": "ownerOf",
+            "outputs": [
+              {
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          }
       ];
       const provider = new ethers.JsonRpcProvider(chain?.rpcUrl);
       const contract = new ethers.Contract(contractAddress, contractAbi, provider);
       const totalSupply = await contract.totalSupply();
       const promiseNFTs = [];
+      // const owners = [];
       for (let i = 0; i < parseFloat(totalSupply); i++) {
         const tokenId = await contract.tokenByIndex(i);
+        // const owner = await contract.ownerOf(tokenId);
+        // owners[i] = owner;
         const uri = await contract.tokenURI(tokenId);
         console.log(chain.currency, tokenId, uri);
         if(uri) {
@@ -83,13 +105,14 @@ export const GetAllNFTs = async () => {
         }
       }
       const allPromises = await Promise.all(promiseNFTs);
-      const allNFTs = allPromises.map((nft) => {
+      const allNFTs = allPromises.map((nft, index) => {
         if(nft) {
           nft.id = Number(nft.id); 
         }
         return {
           ...nft,
-          nftId: chain.currency+nft?.id
+          nftId: chain.currency+nft?.id,
+          // owner: owners[index]
         }
       });
       return allNFTs;
@@ -128,12 +151,32 @@ export const GetMetadataByNftId = async (nftId: string) => {
       "payable": false,
       "stateMutability": "view",
       "type": "function"
-    }];
+    },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256"
+          }
+        ],
+        "name": "ownerOf",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }];
     const contract = new ethers.Contract(contractAddress, contractAbi, provider);
     try {
       const uri = await contract.tokenURI(id);
       const metadata = await getToNFTStorage(id, uri);
-      return metadata;
+      const owner = await contract.ownerOf(metadata?.id);
+      return {metadata, owner};
     } catch (e: any) {
       return null;
     }

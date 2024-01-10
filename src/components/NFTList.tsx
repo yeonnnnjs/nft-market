@@ -7,7 +7,8 @@ interface NFT {
     image: string;
     name: string;
     description: string;
-    nftId: string
+    nftId: string;
+    owner: string;
 }
 
 interface NFTListProps {
@@ -43,7 +44,7 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
                     </div>
                 </div>
             ) : (
-                filteredNFTList.map((nft, index) => (
+                filteredNFTList.map((nft) => (
                     <div key={nft.nftId} className="bg-white p-4 rounded-md shadow-md">
                         <Link href={`/nft/${encodeURIComponent(nft.nftId)}`}>
                             <div className="relative h-32 mb-4 rounded-md overflow-hidden">

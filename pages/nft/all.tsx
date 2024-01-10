@@ -8,6 +8,7 @@ interface NFT {
   name: string;
   description: string;
   nftId: string;
+  owner: string;
 }
 
 interface AllNFTsProps {
