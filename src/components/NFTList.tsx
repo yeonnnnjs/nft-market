@@ -26,7 +26,7 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
     }, [searchTerm, list]);
     console.log(list);
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-20">
             <div className="col-span-full flex items-center justify-center mt-4 gap-4">
                 <input
                     type="text"
@@ -44,18 +44,11 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
                 </div>
             ) : (
                 filteredNFTList.map((nft, index) => (
-                    <div key={index} className="bg-white p-4 rounded-md shadow-md flex flex-col items-center justify-between">
+                    <div key={nft.nftId} className="bg-white p-4 rounded-md shadow-md">
                         <Link href={`/nft/${encodeURIComponent(nft.nftId)}`}>
-                            <Image
-                                src={nft.image}
-                                alt={nft.name}
-                                width={0}
-                                height={0}
-                                sizes="100vw"
-                                style={{ width: '100%', height: 'auto' }}
-                                className="mb-2 rounded-md"
-                                loading="lazy"
-                            />
+                            <div className="relative h-32 mb-4 rounded-md overflow-hidden">
+                                <Image src={nft.image} alt={nft.name} fill={true} objectFit={"cover"}/>
+                            </div>
                             <div className="flex flex-col h-full items-center">
                                 <h2 className="text-lg font-semibold">{nft.name}</h2>
                                 <p className="text-gray-500">{nft.description}</p>

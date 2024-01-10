@@ -46,7 +46,6 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
             .split("; ")
             .find(row => row.startsWith("account="))
             ?.split("=")[1] as string;
-        console.log(selectedAccount);
         const balance = await provider.getBalance(selectedAccount);
         const network = await provider.getNetwork();
         const chain = getChainInfo(Number(network?.chainId));

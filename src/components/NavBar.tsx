@@ -12,9 +12,9 @@ const NavBar = () => {
     return (
         <nav className="bg-blue-500 p-4 fixed w-full h-[8vh]">
             <div className="container mx-auto flex justify-between">
-                <h1 className="text-white text-2xl font-bold flex items-center" onClick={() => handleNavigate("/")}>
+                <span className="cursor-pointer text-white text-2xl font-bold flex items-center" onClick={() => handleNavigate("/")}>
                     NFT Marketplace
-                </h1>
+                </span>
                 <div className="space-x-4 flex items-center">
                     <span className="cursor-pointer text-white hover:text-gray-300" onClick={() => handleNavigate("/nft/all")}>
                         전체보기

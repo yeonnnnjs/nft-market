@@ -1,6 +1,7 @@
-import { GetAllNftIdToPaths, GetMetadataByNftId } from '@/src/utils/contractApi';
+import React from 'react';
 import TransferNFTForm from '../../src/components/TransferNFTForm';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetAllNftIdToPaths, GetMetadataByNftId } from '@/src/utils/contractApi';
 
 interface NFT {
     id: number;
@@ -9,15 +10,15 @@ interface NFT {
     description: string;
 }
 
-const DetailNFT = (nft: NFT) => {
+const DetailNFT: React.FC<NFT> = (nft) => {
     return (
-        <div className='pt-[8vh]'>
-            <div className="bg-white p-4 rounded-md shadow-md w-50 h-50">
-                <img src={nft?.image} alt={nft?.name} className="mb-2 rounded-md" />
-                <h2 className="text-lg font-semibold">{nft?.name}</h2>
-                <p className="text-gray-500">{nft?.description}</p>
+        <div className='pt-[8vh] flex flex-col items-center'>
+            <div className="bg-white p-8 rounded-md shadow-md mb-8 max-w-2xl">
+                <img src={nft?.image} alt={nft?.name} className="mb-4 rounded-md w-full h-96 object-cover" />
+                <h2 className="text-3xl font-semibold mb-2">{nft?.name}</h2>
+                <p className="text-lg text-gray-500">{nft?.description}</p>
             </div>
-            <div className="bg-white p-4 rounded-md shadow-md">
+            <div className="bg-white p-8 rounded-md shadow-md max-w-2xl">
                 <TransferNFTForm nftId={nft?.id} />
             </div>
         </div>
@@ -29,7 +30,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     return { paths, fallback: true };
 }
 
-export const getStaticProps: GetStaticProps  = async ({ params }) => {0
+export const getStaticProps: GetStaticProps = async ({ params }) => {
     const metadata = await GetMetadataByNftId(params?.nftId as string);
     if (!metadata) {
         return {
