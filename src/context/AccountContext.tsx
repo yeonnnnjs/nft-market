@@ -39,7 +39,14 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
       if (ethereum) {
         const provider = await new ethers.BrowserProvider(ethereum);
         const signer = await provider.getSigner();
-        const selectedAccount: string = !localStorage.getItem('account') ? signer.address : localStorage.getItem('account') as string;
+        const selectedAccount: string = !(document.cookie
+            .split("; ")
+            .find(row => row.startsWith("account="))
+            ?.split("=")[1]) ? signer.address : document.cookie
+            .split("; ")
+            .find(row => row.startsWith("account="))
+            ?.split("=")[1] as string;
+        console.log(selectedAccount);
         const balance = await provider.getBalance(selectedAccount);
         const network = await provider.getNetwork();
         const chain = getChainInfo(Number(network?.chainId));
@@ -49,7 +56,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         setProvider(provider);
         setAccount(selectedAccount);
 
-        localStorage.setItem('account', selectedAccount);
+        document.cookie = "account="+selectedAccount;
       }
       //  else {
       //   console.log("MetaMask not installed; using read-only defaults");
@@ -65,13 +72,17 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
     setProvider(null);
     setAccount(null);
     setChainInfo(null);
+    document.cookie = "account=";
     localStorage.removeItem('account');
     router.push('/user/login');
   };
 
   useEffect(() => {
     const ethereum = (window as any).ethereum;
-    const session = localStorage.getItem('account');
+    const session = document.cookie
+        .split("; ")
+        .find(row => row.startsWith("account="))
+        ?.split("=")[1];
     if (session) {
       connectWallet();
     }
@@ -80,7 +91,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
       ethereum.on('accountsChanged', ([newAccount]: string[]) => {
         if (newAccount) {
           setAccount(newAccount);
-          localStorage.setItem('account', newAccount);
+          document.cookie = "account="+newAccount;
         } else {
           disconnectWallet();
         }

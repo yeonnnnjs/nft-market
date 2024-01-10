@@ -1,10 +1,10 @@
-import { useRouter } from "next/router";
-
 export const CheckAuth = () => {
-    const router = useRouter();
-    const account = localStorage.getItem('account');
+    const account = document.cookie
+        .split("; ")
+        .find(row => row.startsWith("account="))
+        ?.split("=")[1];
     if (!account) {
-        router.push('/user/login');
+        window.location.href = '/user/login';
     }
     return null;
 };

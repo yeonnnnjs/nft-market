@@ -4,6 +4,7 @@ import { useAccount } from '@/src/context/AccountContext';
 import { getContractAddress } from '@/src/utils/contractPicker';
 import 'tailwindcss/tailwind.css';
 import { useRouter } from "next/router";
+import CheckAuth from "@/src/utils/auth";
 
 const MintNFTForm = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -15,10 +16,7 @@ const MintNFTForm = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const account = localStorage.getItem('account');
-    if (!account) {
-      router.push('/user/login');
-    }
+    CheckAuth();
   }, [])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
