@@ -54,9 +54,9 @@ const TransferNFTForm: React.FC<TransferNFTProps> = ({ nftId }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-white rounded-md shadow-md">
+    <>
       <label className="block mb-2">
-        To:
+        NFT를 보낼 지갑 주소
         <input
           type="text"
           value={to}
@@ -70,7 +70,7 @@ const TransferNFTForm: React.FC<TransferNFTProps> = ({ nftId }) => {
       >
         전송
       </button>
-    </div>
+    </>
   );
 };
 
