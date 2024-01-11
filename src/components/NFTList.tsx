@@ -23,10 +23,10 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
         );
         setFilteredNFTList(filteredNFTs);
     }, [searchTerm, list]);
-    console.log(list);
+
     return (
         <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-20">
-            <div className="col-span-full flex items-center justify-center mt-4 gap-4 -z-10">
+            <div className="col-span-full flex items-center justify-center mt-4 gap-4">
                 <input
                     type="text"
                     placeholder="NFT 검색"

@@ -76,7 +76,6 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         .find(row => row.startsWith("account="))
         ?.split("=")[1];
 
-    console.log(session);
     if (session) {
       setAccount(session);
       connectWallet();
