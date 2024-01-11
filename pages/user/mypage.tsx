@@ -1,9 +1,8 @@
 import { useAccount } from '@/src/context/AccountContext';
 import NFTList from '../../src/components/NFTList';
-import checkAuth, {CheckAuth} from '@/src/utils/auth';
 import 'tailwindcss/tailwind.css';
 import { GetOwnedNFTs } from "@/src/utils/contractApi";
-import { useEffect } from "react";
+import {GetServerSidePropsContext} from "next";
 
 interface NFT {
     id: number;
@@ -19,10 +18,6 @@ interface myPageProps {
 
 const MyPage = ({nftList}: myPageProps) => {
     const { account, balance, chainInfo, connectWallet } = useAccount();
-
-    useEffect(() => {
-        CheckAuth(account);
-    }, []);
 
     return (
         <div className='pt-[8vh]'>
@@ -53,11 +48,10 @@ const MyPage = ({nftList}: myPageProps) => {
 );
 };
 
-export const getServerSideProps = async (context: any) => {
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
     const account = context.req.headers.cookie?.split("; ")
         .find((row: string) => row.startsWith("account="))
         ?.split("=")[1];
-    console.log(account);
     let nftList: any[] = [];
     if (account) {
         nftList = await GetOwnedNFTs(account);

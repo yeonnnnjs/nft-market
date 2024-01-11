@@ -3,9 +3,6 @@ import { ethers } from 'ethers';
 import { useAccount } from '@/src/context/AccountContext';
 import { getContractAddress } from '@/src/utils/contractPicker';
 import 'tailwindcss/tailwind.css';
-import { useRouter } from "next/router";
-import CheckAuth from "@/src/utils/auth";
-import TransferNFTForm from "@/src/components/TransferNFTForm";
 
 const MintNFTForm = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -15,10 +12,6 @@ const MintNFTForm = () => {
   const { provider, chainInfo } = useAccount();
   const [msg, setMsg] = useState<string>();
   const { account } = useAccount();
-
-  useEffect(() => {
-    CheckAuth(account);
-  }, [])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

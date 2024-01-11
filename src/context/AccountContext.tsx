@@ -55,11 +55,6 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
 
         document.cookie = "account="+selectedAccount;
       }
-      //  else {
-      //   console.log("MetaMask not installed; using read-only defaults");
-      //   const provider = ethers.getDefaultProvider();
-      //   setProvider(provider);
-      // }
     } catch (error: any) {
       console.error('Error connecting wallet:', error.message);
     }
@@ -69,7 +64,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
     setProvider(null);
     setAccount(null);
     setChainInfo(null);
-    document.cookie = "account=";
+    document.cookie = "";
     localStorage.removeItem('account');
     router.push('/user/login');
   };
@@ -80,8 +75,15 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         .split("; ")
         .find(row => row.startsWith("account="))
         ?.split("=")[1];
+
+    console.log(session);
     if (session) {
+      setAccount(session);
       connectWallet();
+    } else {
+      if(router.pathname == "/nft/mint" || router.pathname == "/user/mypage") {
+        router.push("/user/login");
+      }
     }
 
     if (ethereum) {
