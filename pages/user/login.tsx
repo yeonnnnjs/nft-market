@@ -1,16 +1,16 @@
-import { useEffect } from "react";
 import { useAccount } from "@/src/context/AccountContext";
 import { useRouter } from "next/router";
+import {useEffect} from "react";
 
 const RequestLogin = () => {
     const { connectWallet, account } = useAccount();
     const router = useRouter();
 
     useEffect(() => {
-        if (account) {
-            router.back();
+        if(account) {
+            router.push("/");
         }
-    })
+    }, [account]);
 
     return (
         <div className="flex flex-col items-center justify-center h-screen">

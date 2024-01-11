@@ -1,8 +1,5 @@
-export const CheckAuth = () => {
-    const account = document.cookie
-        .split("; ")
-        .find(row => row.startsWith("account="))
-        ?.split("=")[1];
+export const CheckAuth = (account: string | null) => {
+    console.log(account);
     if (!account) {
         window.location.href = '/user/login';
     }

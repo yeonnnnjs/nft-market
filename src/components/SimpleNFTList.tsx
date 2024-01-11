@@ -19,8 +19,8 @@ const SimpleNFTList: React.FC<NFTListProps> = ({ list }: NFTListProps) => {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {nftList.map((nft) => (
-                <div key={nft.id} className="bg-white p-4 rounded-md shadow-md cursor-pointer -z-10" onClick={() => window.location.href=`/nft/${nft.nftId}`}>
-                    <div className="relative h-32 mb-4 rounded-md overflow-hidden -z-20">
+                <div key={nft.id} className="bg-white p-4 rounded-md shadow-md cursor-pointer" onClick={() => location.href=`/nft/${nft.nftId}`}>
+                    <div className="relative h-32 mb-4 rounded-md overflow-hidden">
                         <Image src={nft.image} alt={nft.name} fill={true} priority={true} className="object-cover"/>
                     </div>
                     <h3 className="text-lg font-semibold mb-2">{nft.name}</h3>

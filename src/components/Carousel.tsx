@@ -26,7 +26,7 @@ const Carousel: React.FC<CarouselProps> = ({ items }: CarouselProps) => {
     };
 
     return (
-        <div className="relative overflow-hidden -z-10">
+        <div className="relative overflow-hidden">
             <div className="flex items-center">
                 {nftList.map((item) => (
                     <div
@@ -34,8 +34,8 @@ const Carousel: React.FC<CarouselProps> = ({ items }: CarouselProps) => {
                         style={{transform: `translateX(-${100 * currentSlide}%)`}}
                         className="flex-shrink-0 w-full h-72 transition-transform duration-500 -z-20"
                     >
-                        <div className="relative h-full -z-30">
-                            <Image src={item.image} alt={item.nftId} priority={true} fill={true} className="object-cover rounded-md -z-40"/>
+                        <div className="relative h-full ">
+                            <Image src={item.image} alt={item.nftId} priority={true} fill={true} className="object-cover rounded-md"/>
                             <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 text-white">
                                 <h3 className="text-lg font-semibold">{item.name}</h3>
                                 <p>{item.description}</p>

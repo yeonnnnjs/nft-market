@@ -39,13 +39,11 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
       if (ethereum) {
         const provider = await new ethers.BrowserProvider(ethereum);
         const signer = await provider.getSigner();
-        const selectedAccount: string = !(document.cookie
+        const cookieAccount = document.cookie
             .split("; ")
             .find(row => row.startsWith("account="))
-            ?.split("=")[1]) ? signer.address : document.cookie
-            .split("; ")
-            .find(row => row.startsWith("account="))
-            ?.split("=")[1] as string;
+            ?.split("=")[1];
+        const selectedAccount: string = !cookieAccount ? signer.address : cookieAccount;
         const balance = await provider.getBalance(selectedAccount);
         const network = await provider.getNetwork();
         const chain = getChainInfo(Number(network?.chainId));

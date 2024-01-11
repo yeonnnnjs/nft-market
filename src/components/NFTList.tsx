@@ -7,7 +7,6 @@ interface NFT {
     name: string;
     description: string;
     nftId: string;
-    owner: string;
 }
 
 interface NFTListProps {
@@ -44,11 +43,11 @@ const NFTList: React.FC<NFTListProps> = ({ list }) => {
                 </div>
             ) : (
                 filteredNFTList.map((nft) => (
-                    <div key={nft.nftId} className="bg-white p-4 rounded-md shadow-md cursor-pointer -z-10" onClick={() => window.location.href=`/nft/${nft.nftId}`}>
-                            <div className="relative h-32 mb-4 rounded-md overflow-hidden -z-20">
-                                <Image src={nft.image} alt={nft.name} fill={true} priority={true} className="object-cover" />
+                    <div key={nft.nftId} className="bg-white p-4 rounded-md shadow-md cursor-pointer" onClick={() => location.href=`/nft/${nft.nftId}`}>
+                            <div className="relative h-32 mb-4 rounded-md overflow-hidden">
+                                <Image src={nft.image} alt={nft.name} fill={true} priority={true} className="object-cover" placeholder="blur" blurDataURL={'/public/vercel.svg'}/>
                             </div>
-                            <div className="flex flex-col h-full items-center">
+                            <div className="flex flex-col items-center">
                                 <h2 className="text-lg font-semibold">{nft.name}</h2>
                                 <p className="text-gray-500">{nft.description}</p>
                             </div>

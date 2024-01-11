@@ -10,7 +10,7 @@ const NavBar = () => {
     };
 
     return (
-        <nav className="bg-blue-500 p-4 fixed w-full h-[8vh]">
+        <nav className="bg-blue-500 p-4 fixed w-full h-[8vh] z-50">
             <div className="container mx-auto flex justify-between">
                 <span className="cursor-pointer text-white text-2xl font-bold flex items-center" onClick={() => handleNavigate("/")}>
                     NFT Marketplace

@@ -14,10 +14,10 @@ const MintNFTForm = () => {
   const [description, setDescription] = useState<string>('');
   const { provider, chainInfo } = useAccount();
   const [msg, setMsg] = useState<string>();
-  const router = useRouter();
+  const { account } = useAccount();
 
   useEffect(() => {
-    CheckAuth();
+    CheckAuth(account);
   }, [])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,36 +91,41 @@ const MintNFTForm = () => {
   };
 
   return (
-      <div className='pt-[8vh]'>
-        <div className='pt-[8vh] flex items-center justify-center flex-col gap-4'>
-          <div className="flex w-full h-full">
-            <div className="bg-white p-8 rounded-md shadow-md w-1/2">
-              <label className="block text-sm font-medium text-gray-700">Image:</label>
-              <input type="file" onChange={handleImageChange} accept="image/*"
-                     className="mt-1 p-2 border border-gray-300 rounded-md h-50"/>
-              {imagePreview && (
-                  <img src={imagePreview} alt="Image Preview" className="mt-2 max-w-full h-auto"/>
-              )}
-            </div>
+  <div className='pt-[8vh]'>
+    {account ? (<div className='pt-[8vh] flex items-center justify-center flex-col gap-4'>
+      <div className="flex w-full h-full">
+        <div className="bg-white p-8 rounded-md shadow-md w-1/2">
+          <label className="block text-sm font-medium text-gray-700">Image:</label>
+          <input type="file" onChange={handleImageChange} accept="image/*"
+                 className="mt-1 p-2 border border-gray-300 rounded-md h-50"/>
+          {imagePreview && (
+              <img src={imagePreview} alt="Image Preview" className="mt-2 max-w-full h-auto"/>
+          )}
+        </div>
 
-            <div className="bg-white p-8 rounded-md shadow-md w-1/2">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Name:</label>
-                <input type="text" value={name} onChange={handleNameChange}
-                       className="mt-1 p-2 border border-gray-300 rounded-md"/>
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Description:</label>
-                <input type="text" value={description} onChange={handleDescriptionChange}
-                       className="mt-1 p-2 border border-gray-300 rounded-md"/>
-              </div>
-            </div>
+        <div className="bg-white p-8 rounded-md shadow-md w-1/2">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Name:</label>
+            <input type="text" value={name} onChange={handleNameChange}
+                   className="mt-1 p-2 border border-gray-300 rounded-md"/>
           </div>
-          {msg}
-          <button onClick={handleMint} className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 w-[40vw] flex justify-center mx-auto">Mint NFT</button>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Description:</label>
+            <input type="text" value={description} onChange={handleDescriptionChange}
+                   className="mt-1 p-2 border border-gray-300 rounded-md"/>
+          </div>
         </div>
       </div>
-  );
+      {msg}
+      <button onClick={handleMint}
+              className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700 w-[40vw] flex justify-center mx-auto">Mint
+        NFT
+      </button>
+    </div>) : (<></>)
+    }
+  </div>
+)
+  ;
 };
 
 export default MintNFTForm;
